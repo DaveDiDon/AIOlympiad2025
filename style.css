@@ -1,29 +1,29 @@
 /* CSS Variables for Theming */
 :root {
-    /* Light Theme Defaults (Keeping these as they were good) */
-    --bg-primary: #f0f4f8; /* Light Gray */
-    --bg-secondary: #ffffff; /* White */
-    --bg-section: #f8fafc; /* Slate-50 */
-    --text-primary: #334155; /* Slate-700 */
-    --text-secondary: #475569; /* Slate-600 */
-    --text-header: #1e293b; /* Slate-800 */
-    --text-accent: #4f46e5; /* Indigo-600 */
-    --border-color: #e2e8f0; /* Gray-200 */
+    /* Light Theme Defaults - Adjusted slightly to incorporate more of the palette for consistency */
+    --bg-primary: #f0f4f8; /* Very Light Gray, almost white */
+    --bg-secondary: #ffffff; /* Pure White */
+    --bg-section: #e0f2fe; /* Lightest blue from palette: for sections/cards */
+    --text-primary: #092a44; /* Dark Blue from palette for primary text */
+    --text-secondary: #2c4d6f; /* Slightly lighter dark blue for secondary text */
+    --text-header: #092a44; /* Dark Blue for headers */
+    --text-accent: #72b7e3; /* Mid blue from palette for accent */
+    --border-color: #c9e1f4; /* Light blue from palette for borders */
     --shadow-color-light: rgba(0, 0, 0, 0.1);
     --shadow-color-dark: rgba(0, 0, 0, 0.05);
     --shadow-inset-color: rgba(0, 0, 0, 0.06);
 
-    /* Chart Colors */
-    --chart-bar-songs: #60a5fa; /* Blue-400 */
-    --chart-bar-songs-hover: #3b82f6; /* Blue-500 */
-    --chart-bar-energy: #f87171; /* Red-400 */
-    --chart-bar-energy-hover: #ef4444; /* Red-500 */
-    --chart-bar-histogram: #8a2be2; /* BlueViolet */
-    --chart-bar-histogram-hover: #6a0dad; /* Darker BlueViolet */
-    --chart-axis-text: #475569; /* Slate-600 */
-    --chart-grid: #cbd5e1; /* Slate-300 */
+    /* Chart Colors - Using blues from the palette for light theme */
+    --chart-bar-songs: #72b7e3; /* Mid blue */
+    --chart-bar-songs-hover: #87cdfe; /* Lighter blue for hover */
+    --chart-bar-energy: #f87171; /* Keep red for energy as a contrast */
+    --chart-bar-energy-hover: #ef4444;
+    --chart-bar-histogram: #a7cde9; /* Another mid blue */
+    --chart-bar-histogram-hover: #c9e1f4; /* Lighter blue for hover */
+    --chart-axis-text: #092a44; /* Dark blue for axis text */
+    --chart-grid: #c9e1f4; /* Light blue for grid */
 
-    /* Info Box Colors */
+    /* Info Box Colors (keeping vibrant for light theme) */
     --info-bg-green: #ecfdf5; /* Green-50 */
     --info-border-green: #a7f3d0; /* Green-200 */
     --info-text-green: #047857; /* Green-700 */
@@ -35,60 +35,60 @@
     --info-text-purple: #7e22ce; /* Purple-700 */
 
     /* Button Colors */
-    --btn-primary-bg: #2563eb; /* Blue-600 */
-    --btn-primary-hover-bg: #1d4ed8; /* Blue-700 */
-    --btn-danger-bg: #dc2626; /* Red-600 */
-    --btn-danger-hover-bg: #b91c1c; /* Red-700 */
-    --btn-secondary-bg: #d1d5db; /* Gray-300 */
-    --btn-secondary-text: #374151; /* Gray-800 */
-    --btn-secondary-hover-bg: #9ca3af; /* Gray-400 */
+    --btn-primary-bg: #72b7e3; /* Primary button uses a palette blue */
+    --btn-primary-hover-bg: #87cdfe; /* Lighter palette blue for hover */
+    --btn-danger-bg: #ef4444; /* Red */
+    --btn-danger-hover-bg: #dc2626; /* Darker Red */
+    --btn-secondary-bg: #c9e1f4; /* Secondary button uses a light blue */
+    --btn-secondary-text: #092a44; /* Dark text on secondary button */
+    --btn-secondary-hover-bg: #a7cde9; /* Slightly darker light blue for hover */
 
     /* Input/Table Colors */
-    --input-border: #d1d5db; /* Gray-300 */
-    --input-focus-ring: #3b82f6; /* Blue-500 */
-    --table-header-bg: #e2e8f0; /* Gray-200 */
-    --table-border: #e2e8f0; /* Gray-200 */
-    --table-row-even-bg: #f8fafc; /* Slate-50 */
+    --input-border: #a7cde9; /* Input border from palette */
+    --input-focus-ring: #72b7e3; /* Accent blue for focus ring */
+    --table-header-bg: #c9e1f4; /* Table header from palette */
+    --table-border: #a7cde9; /* Table border from palette */
+    --table-row-even-bg: #e0f2fe; /* Lightest blue from palette for even rows */
 
     /* Message Colors */
     --error-text: #dc2626; /* Red-600 */
     --upload-success-text: #16a34a; /* Green-600 */
 }
 
-/* Dark Mode Overrides - REVISED BASED ON PROVIDED PALETTE */
+/* Dark Mode Overrides - REVISED BASED ON PROVIDED PALETTE AND CONTRAST */
 body.dark {
     --bg-primary: #092a44; /* Dark Blue from palette */
-    --bg-secondary: #1a3a5f; /* Slightly lighter dark blue for main containers */
-    --bg-section: #0f3050; /* Another shade for sections, between primary and secondary */
-    --text-primary: #e0f2fe; /* Very light blue for primary text */
-    --text-secondary: #a7cde9; /* Lighter blue from palette for secondary text */
-    --text-header: #72b7e3; /* Blue from palette for headers */
+    --bg-secondary: #123456; /* Slightly lighter dark blue for main containers (new shade) */
+    --bg-section: #0b2238; /* Even darker blue for sections/cards (new shade) */
+    --text-primary: #e0f2fe; /* Very light blue for primary text (good contrast) */
+    --text-secondary: #a7cde9; /* Lighter blue from palette for secondary text (good contrast) */
+    --text-header: #72b7e3; /* Mid blue from palette for headers (good contrast) */
     --text-accent: #87cdfe; /* Brightest blue from palette for accent */
-    --border-color: #2c4d6f; /* A darker border color */
+    --border-color: #2c4d6f; /* A darker border color for separation */
     --shadow-color-light: rgba(0, 0, 0, 0.4); /* Darker shadows for depth */
     --shadow-color-dark: rgba(0, 0, 0, 0.2);
-    --shadow-inset-color: rgba(0, 0, 0, 0.25);
+    --shadow-inset-color: rgba(0, 0, 0, 0.35); /* Increased inset shadow visibility */
 
-    /* Chart Colors - Adjusted to work with new blue palette */
-    --chart-bar-songs: #72b7e3; /* Use a palette blue */
-    --chart-bar-songs-hover: #87cdfe; /* Lighter palette blue for hover */
-    --chart-bar-energy: #f87171; /* Keep red for energy as a contrast */
+    /* Chart Colors - Adjusted to work with new blue palette for dark mode */
+    --chart-bar-songs: #72b7e3; /* Mid blue, visible on dark background */
+    --chart-bar-songs-hover: #87cdfe; /* Lighter blue for hover */
+    --chart-bar-energy: #f87171; /* Keep red, ensuring it's vibrant */
     --chart-bar-energy-hover: #ef4444;
-    --chart-bar-histogram: #a7cde9; /* Another palette blue for histogram */
-    --chart-bar-histogram-hover: #c9e1f4; /* Lighter palette blue for hover */
+    --chart-bar-histogram: #a7cde9; /* Another mid blue for histogram */
+    --chart-bar-histogram-hover: #c9e1f4; /* Lighter blue for hover */
     --chart-axis-text: #c9e1f4; /* Lightest blue for axis text */
-    --chart-grid: #2c4d6f; /* Darker grid lines */
+    --chart-grid: #2c4d6f; /* Darker grid lines, but visible */
 
-    /* Info Box Colors - Adjusting for dark mode readability and consistency */
-    --info-bg-green: #0f4a3a; /* Darker green background */
-    --info-border-green: #38a169; /* Green border */
-    --info-text-green: #9ae6b4; /* Lighter green text */
-    --info-bg-yellow: #5c440a; /* Darker yellow background */
-    --info-border-yellow: #d69e2e; /* Yellow border */
-    --info-text-yellow: #f6ad55; /* Lighter yellow text */
-    --info-bg-purple: #3a245d; /* Darker purple background */
-    --info-border-purple: #805ad5; /* Purple border */
-    --info-text-purple: #d6bcfa; /* Lighter purple text */
+    /* Info Box Colors - Consistent dark mode look */
+    --info-bg-green: #0d382d; /* Darker green background */
+    --info-border-green: #1a6e4d; /* Green border */
+    --info-text-green: #6ee7b7; /* Lighter green text */
+    --info-bg-yellow: #4d3a0d; /* Darker yellow background */
+    --info-border-yellow: #9d7d1e; /* Yellow border */
+    --info-text-yellow: #eab308; /* Lighter yellow text */
+    --info-bg-purple: #351c4e; /* Darker purple background */
+    --info-border-purple: #6a3abf; /* Purple border */
+    --info-text-purple: #c084fc; /* Lighter purple text */
 
     /* Button Colors */
     --btn-primary-bg: #72b7e3; /* Primary button uses a palette blue */
@@ -102,9 +102,10 @@ body.dark {
     /* Input/Table Colors */
     --input-border: #3b608a; /* Input border matches other dark blues */
     --input-focus-ring: #87cdfe; /* Accent blue for focus ring */
-    --table-header-bg: #1a3a5f; /* Table header matches secondary background */
+    --table-header-bg: #123456; /* Table header matches secondary background */
     --table-border: #2c4d6f; /* Table border matches main border color */
-    --table-row-even-bg: #0f3050; /* Darker background for even rows - NO MORE BLINDING WHITE */
+    --table-row-even-bg: #0b2238; /* Even row background is now distinctly dark - FIX FOR BLINDING WHITE */
+    --table-row-odd-bg: #123456; /* Added explicit odd row background - ensures consistency */
 }
 
 /* Apply CSS Variables */
@@ -118,16 +119,20 @@ body {
     background-color: var(--bg-secondary);
     border-radius: 1.5rem; /* rounded-3xl - More rounded */
     box-shadow: 0 10px 15px -3px var(--shadow-color-light), 0 4px 6px -2px var(--shadow-color-dark);
+    padding: 2.5rem; /* Increased padding around the container */
 }
 h1, h2, h3 {
     color: var(--text-header);
     font-family: 'Red Hat Display', sans-serif;
+    font-weight: 600; /* Ensured headers are semi-bold */
 }
 h1 {
     color: var(--text-accent);
+    font-size: 2.8rem; /* Slightly larger for main heading */
 }
 h2 {
-    color: var(--text-accent);
+    color: var(--text-accent); /* Main section headers use accent color */
+    font-size: 2.2rem; /* Slightly larger for section headers */
 }
 .chart-container-wrapper, .data-section-wrapper {
     background-color: var(--bg-section);
@@ -159,9 +164,10 @@ h2 {
 }
 .axis line, .axis path {
     stroke: var(--chart-grid);
+    stroke-width: 0.5; /* Slightly thinner grid lines */
 }
 .input-field {
-    border-color: var(--input-border);
+    border: 1px solid var(--input-border); /* Explicit border for clarity */
     background-color: var(--bg-secondary);
     color: var(--text-primary);
     border-radius: 0.75rem; /* rounded-xl - More rounded */
@@ -170,16 +176,18 @@ h2 {
 .input-field:focus {
     outline: none;
     box-shadow: 0 0 0 3px var(--input-focus-ring);
+    border-color: var(--input-focus-ring); /* Solid border on focus */
 }
 .btn-primary, .btn-danger, .btn-secondary {
     border-radius: 0.75rem; /* rounded-xl - More rounded */
     padding: 0.75rem 1.5rem;
     font-weight: 500;
     transition: background-color 0.2s ease, transform 0.1s ease;
+    border: none; /* Ensure no default button border */
 }
 .btn-primary {
     background-color: var(--btn-primary-bg);
-    color: white;
+    color: white; /* White text for primary button */
 }
 .btn-primary:hover {
     background-color: var(--btn-primary-hover-bg);
@@ -187,7 +195,7 @@ h2 {
 }
 .btn-danger {
     background-color: var(--btn-danger-bg);
-    color: white;
+    color: white; /* White text for danger button */
 }
 .btn-danger:hover {
     background-color: var(--btn-danger-hover-bg);
@@ -204,7 +212,7 @@ h2 {
 table {
     border-collapse: separate;
     border-spacing: 0;
-    border-color: var(--table-border);
+    border: 1px solid var(--table-border); /* Table gets a border */
     border-radius: 0.75rem; /* rounded-xl - More rounded */
     overflow: hidden;
     width: 100%;
@@ -212,15 +220,17 @@ table {
 th, td {
     border-bottom: 1px solid var(--table-border);
     padding: 1rem 1.25rem;
-    color: var(--text-primary);
-    text-align: left;
+    color: var(--text-primary); /* Default text primary */
 }
 th {
     background-color: var(--table-header-bg);
     font-weight: 600;
-    color: var(--text-header);
+    color: var(--text-header); /* Table headers use header text color */
 }
-tr:nth-child(even) {
+tbody tr:nth-child(odd) { /* Explicitly target odd rows in tbody */
+    background-color: var(--table-row-odd-bg);
+}
+tbody tr:nth-child(even) { /* Explicitly target even rows in tbody */
     background-color: var(--table-row-even-bg);
 }
 tr:last-child td {
@@ -244,24 +254,25 @@ tr:last-child td {
 .p-6.bg-yellow-50 .text-yellow-700 { color: var(--info-text-yellow); }
 .p-6.bg-purple-50 { background-color: var(--info-bg-purple); border-color: var(--info-border-purple); }
 .p-6.bg-purple-50 .text-purple-700 { color: var(--info-text-purple); }
-.text-gray-600, .text-gray-500, .text-gray-800, .text-gray-700 {
+/* Adjust specific Tailwind text colors to use themed variables where appropriate */
+.text-gray-600, .text-gray-500 {
     color: var(--text-secondary);
 }
 .text-gray-800 {
     color: var(--text-primary);
 }
-.text-gray-700 {
+.text-gray-700 { /* For chart subtitles */
     color: var(--text-header);
 }
 
 
-/* Sticky Dark Mode Toggle Button - REVISED POSITIONING */
+/* Sticky Dark Mode Toggle Button */
 #darkModeToggle {
-    position: fixed; /* Keep it fixed */
-    bottom: 2rem; /* Position from bottom */
-    right: 2rem; /* Position from right */
-    top: auto; /* Remove top positioning */
-    left: auto; /* Remove left positioning */
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    top: auto;
+    left: auto;
     z-index: 1000;
     width: 3.5rem;
     height: 3.5rem;
@@ -269,7 +280,7 @@ tr:last-child td {
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 4px 6px -1px var(--shadow-color-light), 0 2px 4px -1px var(--shadow-color-dark); /* Use themed shadows */
+    box-shadow: 0 4px 6px -1px var(--shadow-color-light), 0 2px 4px -1px var(--shadow-color-dark);
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.2s ease, color 0.3s ease;
     background-color: var(--btn-secondary-bg);
