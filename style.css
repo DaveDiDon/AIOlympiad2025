@@ -109,18 +109,19 @@ body.dark {
 
 /* Apply CSS Variables */
 body {
-    font-family: 'Red Hat Display', sans-serif; /* Changed font */
+    font-family: 'Red Hat Display', sans-serif; /* Ensuring all text uses Red Hat Display */
     background-color: var(--bg-primary);
     color: var(--text-primary);
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 .container {
     background-color: var(--bg-secondary);
-    border-radius: 1.25rem; /* rounded-2xl */
+    border-radius: 1.5rem; /* rounded-3xl - More rounded */
     box-shadow: 0 10px 15px -3px var(--shadow-color-light), 0 4px 6px -2px var(--shadow-color-dark);
 }
 h1, h2, h3 {
     color: var(--text-header);
+    font-family: 'Red Hat Display', sans-serif; /* Explicitly ensure headers use Red Hat Display */
 }
 h1 {
     color: var(--text-accent);
@@ -130,8 +131,10 @@ h2 {
 }
 .chart-container-wrapper, .data-section-wrapper {
     background-color: var(--bg-section);
-    border-radius: 1rem; /* rounded-xl */
+    border-radius: 1.5rem; /* rounded-3xl - More rounded */
     box-shadow: inset 0 2px 4px 0 var(--shadow-inset-color);
+    padding: 1.5rem; /* Added padding for better spacing */
+    margin-bottom: 2.5rem; /* Added margin for better spacing */
 }
 .bar-songs {
     fill: var(--chart-bar-songs);
@@ -161,50 +164,67 @@ h2 {
     border-color: var(--input-border);
     background-color: var(--bg-secondary);
     color: var(--text-primary);
-    border-radius: 0.5rem; /* rounded-lg */
+    border-radius: 0.75rem; /* rounded-xl - More rounded */
+    padding: 0.75rem 1rem; /* Adjust padding for better look */
 }
 .input-field:focus {
     outline: none;
-    box-shadow: 0 0 0 2px var(--input-focus-ring);
+    box-shadow: 0 0 0 3px var(--input-focus-ring); /* Slightly larger focus ring */
+}
+.btn-primary, .btn-danger, .btn-secondary {
+    border-radius: 0.75rem; /* rounded-xl - More rounded */
+    padding: 0.75rem 1.5rem; /* Adjust padding for buttons */
+    font-weight: 500; /* Medium font weight */
+    transition: background-color 0.2s ease, transform 0.1s ease;
 }
 .btn-primary {
     background-color: var(--btn-primary-bg);
     color: white;
-    border-radius: 0.5rem; /* rounded-lg */
 }
 .btn-primary:hover {
     background-color: var(--btn-primary-hover-bg);
+    transform: translateY(-1px);
 }
 .btn-danger {
     background-color: var(--btn-danger-bg);
     color: white;
-    border-radius: 0.5rem; /* rounded-lg */
 }
 .btn-danger:hover {
     background-color: var(--btn-danger-hover-bg);
+    transform: translateY(-1px);
 }
 .btn-secondary {
     background-color: var(--btn-secondary-bg);
     color: var(--btn-secondary-text);
-    border-radius: 0.5rem; /* rounded-lg */
 }
 .btn-secondary:hover {
     background-color: var(--btn-secondary-hover-bg);
+    transform: translateY(-1px);
 }
 table {
+    border-collapse: separate; /* Required for border-radius to apply */
+    border-spacing: 0; /* Ensures no space between cells */
     border-color: var(--table-border);
-    border-radius: 0.75rem; /* rounded-lg */
+    border-radius: 0.75rem; /* rounded-xl - More rounded */
     overflow: hidden; /* Ensures rounded corners apply to table content */
+    width: 100%;
 }
 th, td {
-    border-color: var(--table-border);
+    border-bottom: 1px solid var(--table-border);
+    padding: 1rem 1.25rem; /* Increased padding */
     color: var(--text-primary);
+    text-align: left;
 }
 th {
     background-color: var(--table-header-bg);
+    font-weight: 600; /* Semi-bold header */
+    color: var(--text-header);
 }
 tr:nth-child(even) {
     background-color: var(--table-row-even-bg);
+}
+tr:last-child td {
+    border-bottom: none; /* No border on the last row's cells */
 }
 .text-red-600 { /* Specific override for error message */
     color: var(--error-text);
@@ -214,21 +234,26 @@ tr:nth-child(even) {
 }
 
 /* Info Box Specifics - using direct Tailwind classes for simplicity, but could be themed too */
-.p-6.bg-green-50 { background-color: var(--info-bg-green); border-color: var(--info-border-green); border-radius: 0.75rem; }
+.p-6.bg-green-50, .p-6.bg-yellow-50, .p-6.bg-purple-50 {
+    border-radius: 1rem; /* rounded-xl - More rounded for info boxes */
+    border-width: 1px; /* Ensure border is visible */
+}
+.p-6.bg-green-50 { background-color: var(--info-bg-green); border-color: var(--info-border-green); }
 .p-6.bg-green-50 .text-green-700 { color: var(--info-text-green); }
-.p-6.bg-yellow-50 { background-color: var(--info-bg-yellow); border-color: var(--info-border-yellow); border-radius: 0.75rem; }
+.p-6.bg-yellow-50 { background-color: var(--info-bg-yellow); border-color: var(--info-border-yellow); }
 .p-6.bg-yellow-50 .text-yellow-700 { color: var(--info-text-yellow); }
-.p-6.bg-purple-50 { background-color: var(--info-bg-purple); border-color: var(--info-border-purple); border-radius: 0.75rem; }
+.p-6.bg-purple-50 { background-color: var(--info-bg-purple); border-color: var(--info-border-purple); }
 .p-6.bg-purple-50 .text-purple-700 { color: var(--info-text-purple); }
 .text-gray-600, .text-gray-500, .text-gray-800, .text-gray-700 {
-    color: var(--text-secondary);
+    color: var(--text-secondary); /* General text uses secondary color by default */
 }
 .text-gray-800 {
-    color: var(--text-primary);
+    color: var(--text-primary); /* For primary text elements that might use this class */
 }
 .text-gray-700 {
-    color: var(--text-header);
+    color: var(--text-header); /* For sub-headers within sections */
 }
+
 
 /* Sticky Dark Mode Toggle Button */
 #darkModeToggle {
@@ -255,4 +280,18 @@ tr:nth-child(even) {
 #darkModeToggle svg {
     width: 1.75rem; /* Icon size */
     height: 1.75rem; /* Icon size */
+}
+
+/* Added styles for icon toggling */
+body.dark .sun-icon {
+    display: block;
+}
+body.dark .moon-icon {
+    display: none;
+}
+body:not(.dark) .sun-icon {
+    display: none;
+}
+body:not(.dark) .moon-icon {
+    display: block;
 }
