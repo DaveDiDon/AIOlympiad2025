@@ -5,9 +5,6 @@ const LOCAL_STORAGE_KEY = 'userPlaylist';
 const DARK_MODE_KEY = 'darkModeEnabled'; // Key for dark mode preference
 let playlist = []; // This array will hold the current playlist data
 
-// Default expanded playlist data (removed as per request)
-// const default_playlist_data = [ ... ];
-
 // Define the desired order of days for consistent plotting
 const daysOrder = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
@@ -30,6 +27,9 @@ const topArtistResult = document.getElementById('topArtistResult');
 const energyLevelResult = document.getElementById('energyLevelResult');
 const dailyMusicStatement = document.getElementById('dailyMusicStatement');
 const darkModeToggle = document.getElementById('darkModeToggle'); // Get the new toggle button
+// Get the sun and moon icons within the toggle button
+const sunIcon = darkModeToggle.querySelector('.sun-icon');
+const moonIcon = darkModeToggle.querySelector('.moon-icon');
 
 
 // --- Local Storage Functions ---
@@ -50,12 +50,14 @@ function loadDarkModePreference() {
     const isDarkMode = localStorage.getItem(DARK_MODE_KEY) === 'true';
     if (isDarkMode) {
         document.body.classList.add('dark');
-        // Set sun icon for dark mode (user sees sun, clicks to go to light)
-        darkModeToggle.innerHTML = '<svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 00-.707-.293H15a1 1 0 000-2h-.586a1 1 0 00-.707.293l-.707.707a1 1 0 001.414 1.414l.707-.707zM10 15a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zm-4 0a1 1 0 00-1 1v1a1 1 0 102 0v-1a1 1 0 00-1-1zm-2.12-10.607a1 1 0 00-.707-.293H5a1 1 0 000-2h-.586a1 1 0 00-.707.293l-.707.707a1 1 0 001.414 1.414l.707-.707z" clip-rule="evenodd"></path></svg>';
+        // Ensure the correct icon is visible on load
+        if (sunIcon) sunIcon.classList.remove('hidden');
+        if (moonIcon) moonIcon.classList.add('hidden');
     } else {
         document.body.classList.remove('dark');
-        // Set moon icon for light mode (user sees moon, clicks to go to dark)
-        darkModeToggle.innerHTML = '<svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>';
+        // Ensure the correct icon is visible on load
+        if (sunIcon) sunIcon.classList.add('hidden');
+        if (moonIcon) moonIcon.classList.remove('hidden');
     }
 }
 
@@ -64,11 +66,15 @@ function toggleDarkMode() {
     if (isCurrentlyDark) {
         document.body.classList.remove('dark');
         localStorage.setItem(DARK_MODE_KEY, 'false');
-        darkModeToggle.innerHTML = '<svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>'; // Moon icon
+        // Show moon icon, hide sun icon
+        if (sunIcon) sunIcon.classList.add('hidden');
+        if (moonIcon) moonIcon.classList.remove('hidden');
     } else {
         document.body.classList.add('dark');
         localStorage.setItem(DARK_MODE_KEY, 'true');
-        darkModeToggle.innerHTML = '<svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 00-.707-.293H15a1 1 0 000-2h-.586a1 1 0 00-.707.293l-.707.707a1 1 0 001.414 1.414l.707-.707zM10 15a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zm-4 0a1 1 0 00-1 1v1a1 1 0 102 0v-1a1 1 0 00-1-1zm-2.12-10.607a1 1 0 00-.707-.293H5a1 1 0 000-2h-.586a1 1 0 00-.707.293l-.707.707a1 1 0 001.414 1.414l.707-.707z" clip-rule="evenodd"></path></svg>'; // Sun icon
+        // Show sun icon, hide moon icon
+        if (sunIcon) sunIcon.classList.remove('hidden');
+        if (moonIcon) moonIcon.classList.add('hidden');
     }
     // Re-draw charts to apply new colors
     if (playlist.length > 0) {
