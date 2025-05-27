@@ -1,6 +1,6 @@
 /* CSS Variables for Theming */
 :root {
-    /* Light Theme Defaults */
+    /* Light Theme Defaults (Keeping these as they were good) */
     --bg-primary: #f0f4f8; /* Light Gray */
     --bg-secondary: #ffffff; /* White */
     --bg-section: #f8fafc; /* Slate-50 */
@@ -55,61 +55,61 @@
     --upload-success-text: #16a34a; /* Green-600 */
 }
 
-/* Dark Mode Overrides */
+/* Dark Mode Overrides - REVISED BASED ON PROVIDED PALETTE */
 body.dark {
-    --bg-primary: #1a202c; /* Dark Blue-Gray */
-    --bg-secondary: #2d3748; /* Darker Blue-Gray */
-    --bg-section: #28303e; /* Even darker for sections */
-    --text-primary: #e2e8f0; /* Light Gray */
-    --text-secondary: #a0aec0; /* Gray-400 */
-    --text-header: #e2e8f0; /* Light Gray */
-    --text-accent: #818cf8; /* Indigo-400 */
-    --border-color: #4a5568; /* Gray-600 */
-    --shadow-color-light: rgba(255, 255, 255, 0.05);
-    --shadow-color-dark: rgba(255, 255, 255, 0.02);
-    --shadow-inset-color: rgba(0, 0, 0, 0.2);
+    --bg-primary: #092a44; /* Dark Blue from palette */
+    --bg-secondary: #1a3a5f; /* Slightly lighter dark blue for main containers */
+    --bg-section: #0f3050; /* Another shade for sections, between primary and secondary */
+    --text-primary: #e0f2fe; /* Very light blue for primary text */
+    --text-secondary: #a7cde9; /* Lighter blue from palette for secondary text */
+    --text-header: #72b7e3; /* Blue from palette for headers */
+    --text-accent: #87cdfe; /* Brightest blue from palette for accent */
+    --border-color: #2c4d6f; /* A darker border color */
+    --shadow-color-light: rgba(0, 0, 0, 0.4); /* Darker shadows for depth */
+    --shadow-color-dark: rgba(0, 0, 0, 0.2);
+    --shadow-inset-color: rgba(0, 0, 0, 0.25);
 
-    /* Chart Colors */
-    --chart-bar-songs: #4299e1; /* Blue-500 */
-    --chart-bar-songs-hover: #3182ce; /* Blue-600 */
-    --chart-bar-energy: #fc8181; /* Red-300 */
-    --chart-bar-energy-hover: #e53e3e; /* Red-500 */
-    --chart-bar-histogram: #b39ddb; /* Deep Purple-200 */
-    --chart-bar-histogram-hover: #9575cd; /* Deep Purple-300 */
-    --chart-axis-text: #a0aec0; /* Gray-400 */
-    --chart-grid: #4a5568; /* Gray-600 */
+    /* Chart Colors - Adjusted to work with new blue palette */
+    --chart-bar-songs: #72b7e3; /* Use a palette blue */
+    --chart-bar-songs-hover: #87cdfe; /* Lighter palette blue for hover */
+    --chart-bar-energy: #f87171; /* Keep red for energy as a contrast */
+    --chart-bar-energy-hover: #ef4444;
+    --chart-bar-histogram: #a7cde9; /* Another palette blue for histogram */
+    --chart-bar-histogram-hover: #c9e1f4; /* Lighter palette blue for hover */
+    --chart-axis-text: #c9e1f4; /* Lightest blue for axis text */
+    --chart-grid: #2c4d6f; /* Darker grid lines */
 
-    /* Info Box Colors */
-    --info-bg-green: #2f4f4f; /* Darker Green */
-    --info-border-green: #38a169; /* Green-600 */
-    --info-text-green: #9ae6b4; /* Green-300 */
-    --info-bg-yellow: #4a4020; /* Darker Yellow */
-    --info-border-yellow: #d69e2e; /* Yellow-600 */
-    --info-text-yellow: #f6ad55; /* Yellow-300 */
-    --info-bg-purple: #3a245d; /* Darker Purple */
-    --info-border-purple: #805ad5; /* Purple-600 */
-    --info-text-purple: #d6bcfa; /* Purple-300 */
+    /* Info Box Colors - Adjusting for dark mode readability and consistency */
+    --info-bg-green: #0f4a3a; /* Darker green background */
+    --info-border-green: #38a169; /* Green border */
+    --info-text-green: #9ae6b4; /* Lighter green text */
+    --info-bg-yellow: #5c440a; /* Darker yellow background */
+    --info-border-yellow: #d69e2e; /* Yellow border */
+    --info-text-yellow: #f6ad55; /* Lighter yellow text */
+    --info-bg-purple: #3a245d; /* Darker purple background */
+    --info-border-purple: #805ad5; /* Purple border */
+    --info-text-purple: #d6bcfa; /* Lighter purple text */
 
     /* Button Colors */
-    --btn-primary-bg: #4c51bf; /* Indigo-700 */
-    --btn-primary-hover-bg: #434190; /* Indigo-800 */
-    --btn-danger-bg: #e53e3e; /* Red-500 */
-    --btn-danger-hover-bg: #c53030; /* Red-600 */
-    --btn-secondary-bg: #4a5568; /* Gray-600 */
-    --btn-secondary-text: #e2e8f0; /* Light Gray */
-    --btn-secondary-hover-bg: #64748b; /* Gray-500 */
+    --btn-primary-bg: #72b7e3; /* Primary button uses a palette blue */
+    --btn-primary-hover-bg: #87cdfe; /* Lighter palette blue for hover */
+    --btn-danger-bg: #ef4444; /* Red */
+    --btn-danger-hover-bg: #dc2626; /* Darker Red */
+    --btn-secondary-bg: #2c4d6f; /* Secondary button uses a dark blue */
+    --btn-secondary-text: #e0f2fe; /* Light text on secondary button */
+    --btn-secondary-hover-bg: #3b608a; /* Slightly lighter dark blue for hover */
 
     /* Input/Table Colors */
-    --input-border: #4a5568; /* Gray-600 */
-    --input-focus-ring: #63b3ed; /* Blue-300 */
-    --table-header-bg: #4a5568; /* Gray-600 */
-    --table-border: #4a5568; /* Gray-600 */
-    --table-row-even-bg: #2d3748; /* Darker Blue-Gray */
+    --input-border: #3b608a; /* Input border matches other dark blues */
+    --input-focus-ring: #87cdfe; /* Accent blue for focus ring */
+    --table-header-bg: #1a3a5f; /* Table header matches secondary background */
+    --table-border: #2c4d6f; /* Table border matches main border color */
+    --table-row-even-bg: #0f3050; /* Darker background for even rows - NO MORE BLINDING WHITE */
 }
 
 /* Apply CSS Variables */
 body {
-    font-family: 'Red Hat Display', sans-serif; /* Ensuring all text uses Red Hat Display */
+    font-family: 'Red Hat Display', sans-serif;
     background-color: var(--bg-primary);
     color: var(--text-primary);
     transition: background-color 0.3s ease, color 0.3s ease;
@@ -121,7 +121,7 @@ body {
 }
 h1, h2, h3 {
     color: var(--text-header);
-    font-family: 'Red Hat Display', sans-serif; /* Explicitly ensure headers use Red Hat Display */
+    font-family: 'Red Hat Display', sans-serif;
 }
 h1 {
     color: var(--text-accent);
@@ -133,8 +133,8 @@ h2 {
     background-color: var(--bg-section);
     border-radius: 1.5rem; /* rounded-3xl - More rounded */
     box-shadow: inset 0 2px 4px 0 var(--shadow-inset-color);
-    padding: 1.5rem; /* Added padding for better spacing */
-    margin-bottom: 2.5rem; /* Added margin for better spacing */
+    padding: 1.5rem;
+    margin-bottom: 2.5rem;
 }
 .bar-songs {
     fill: var(--chart-bar-songs);
@@ -165,16 +165,16 @@ h2 {
     background-color: var(--bg-secondary);
     color: var(--text-primary);
     border-radius: 0.75rem; /* rounded-xl - More rounded */
-    padding: 0.75rem 1rem; /* Adjust padding for better look */
+    padding: 0.75rem 1rem;
 }
 .input-field:focus {
     outline: none;
-    box-shadow: 0 0 0 3px var(--input-focus-ring); /* Slightly larger focus ring */
+    box-shadow: 0 0 0 3px var(--input-focus-ring);
 }
 .btn-primary, .btn-danger, .btn-secondary {
     border-radius: 0.75rem; /* rounded-xl - More rounded */
-    padding: 0.75rem 1.5rem; /* Adjust padding for buttons */
-    font-weight: 500; /* Medium font weight */
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
     transition: background-color 0.2s ease, transform 0.1s ease;
 }
 .btn-primary {
@@ -202,41 +202,41 @@ h2 {
     transform: translateY(-1px);
 }
 table {
-    border-collapse: separate; /* Required for border-radius to apply */
-    border-spacing: 0; /* Ensures no space between cells */
+    border-collapse: separate;
+    border-spacing: 0;
     border-color: var(--table-border);
     border-radius: 0.75rem; /* rounded-xl - More rounded */
-    overflow: hidden; /* Ensures rounded corners apply to table content */
+    overflow: hidden;
     width: 100%;
 }
 th, td {
     border-bottom: 1px solid var(--table-border);
-    padding: 1rem 1.25rem; /* Increased padding */
+    padding: 1rem 1.25rem;
     color: var(--text-primary);
     text-align: left;
 }
 th {
     background-color: var(--table-header-bg);
-    font-weight: 600; /* Semi-bold header */
+    font-weight: 600;
     color: var(--text-header);
 }
 tr:nth-child(even) {
     background-color: var(--table-row-even-bg);
 }
 tr:last-child td {
-    border-bottom: none; /* No border on the last row's cells */
+    border-bottom: none;
 }
-.text-red-600 { /* Specific override for error message */
+.text-red-600 {
     color: var(--error-text);
 }
-.text-green-600 { /* Specific override for upload success message */
+.text-green-600 {
     color: var(--upload-success-text);
 }
 
-/* Info Box Specifics - using direct Tailwind classes for simplicity, but could be themed too */
+/* Info Box Specifics */
 .p-6.bg-green-50, .p-6.bg-yellow-50, .p-6.bg-purple-50 {
-    border-radius: 1rem; /* rounded-xl - More rounded for info boxes */
-    border-width: 1px; /* Ensure border is visible */
+    border-radius: 1rem;
+    border-width: 1px;
 }
 .p-6.bg-green-50 { background-color: var(--info-bg-green); border-color: var(--info-border-green); }
 .p-6.bg-green-50 .text-green-700 { color: var(--info-text-green); }
@@ -245,44 +245,46 @@ tr:last-child td {
 .p-6.bg-purple-50 { background-color: var(--info-bg-purple); border-color: var(--info-border-purple); }
 .p-6.bg-purple-50 .text-purple-700 { color: var(--info-text-purple); }
 .text-gray-600, .text-gray-500, .text-gray-800, .text-gray-700 {
-    color: var(--text-secondary); /* General text uses secondary color by default */
+    color: var(--text-secondary);
 }
 .text-gray-800 {
-    color: var(--text-primary); /* For primary text elements that might use this class */
+    color: var(--text-primary);
 }
 .text-gray-700 {
-    color: var(--text-header); /* For sub-headers within sections */
+    color: var(--text-header);
 }
 
 
-/* Sticky Dark Mode Toggle Button */
+/* Sticky Dark Mode Toggle Button - REVISED POSITIONING */
 #darkModeToggle {
-    position: fixed;
-    top: 1.5rem; /* Adjusted to top right corner with padding */
-    right: 1.5rem; /* Adjusted to top right corner with padding */
+    position: fixed; /* Keep it fixed */
+    bottom: 2rem; /* Position from bottom */
+    right: 2rem; /* Position from right */
+    top: auto; /* Remove top positioning */
+    left: auto; /* Remove left positioning */
     z-index: 1000;
-    width: 3.5rem; /* Make it a circle */
-    height: 3.5rem; /* Make it a circle */
-    border-radius: 50%; /* Perfect circle */
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    box-shadow: 0 4px 6px -1px var(--shadow-color-light), 0 2px 4px -1px var(--shadow-color-dark); /* Use themed shadows */
     cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease, color 0.3s ease; /* Added color transition */
-    background-color: var(--btn-secondary-bg); /* Use theme color */
-    color: var(--btn-secondary-text); /* Use theme color */
+    transition: background-color 0.3s ease, transform 0.2s ease, color 0.3s ease;
+    background-color: var(--btn-secondary-bg);
+    color: var(--btn-secondary-text);
 }
 #darkModeToggle:hover {
-    background-color: var(--btn-secondary-hover-bg); /* Use theme color */
+    background-color: var(--btn-secondary-hover-bg);
     transform: translateY(-2px);
 }
 #darkModeToggle svg {
-    width: 1.75rem; /* Icon size */
-    height: 1.75rem; /* Icon size */
+    width: 1.75rem;
+    height: 1.75rem;
 }
 
-/* Added styles for icon toggling */
+/* Icon toggling */
 body.dark .sun-icon {
     display: block;
 }
