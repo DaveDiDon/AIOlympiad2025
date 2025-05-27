@@ -50,10 +50,12 @@ function loadDarkModePreference() {
     const isDarkMode = localStorage.getItem(DARK_MODE_KEY) === 'true';
     if (isDarkMode) {
         document.body.classList.add('dark');
-        darkModeToggle.innerHTML = '<svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 00-.707-.293H15a1 1 0 000-2h-.586a1 1 0 00-.707.293l-.707.707a1 1 0 001.414 1.414l.707-.707zM10 15a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zm-4 0a1 1 0 00-1 1v1a1 1 0 102 0v-1a1 1 0 00-1-1zm-2.12-10.607a1 1 0 00-.707-.293H5a1 1 0 000-2h-.586a1 1 0 00-.707.293l-.707.707a1 1 0 001.414 1.414l.707-.707z" clip-rule="evenodd"></path></svg>'; // Sun icon
+        // Set sun icon for dark mode (user sees sun, clicks to go to light)
+        darkModeToggle.innerHTML = '<svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 00-.707-.293H15a1 1 0 000-2h-.586a1 1 0 00-.707.293l-.707.707a1 1 0 001.414 1.414l.707-.707zM10 15a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zm-4 0a1 1 0 00-1 1v1a1 1 0 102 0v-1a1 1 0 00-1-1zm-2.12-10.607a1 1 0 00-.707-.293H5a1 1 0 000-2h-.586a1 1 0 00-.707.293l-.707.707a1 1 0 001.414 1.414l.707-.707z" clip-rule="evenodd"></path></svg>';
     } else {
         document.body.classList.remove('dark');
-        darkModeToggle.innerHTML = '<svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>'; // Moon icon
+        // Set moon icon for light mode (user sees moon, clicks to go to dark)
+        darkModeToggle.innerHTML = '<svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>';
     }
 }
 
