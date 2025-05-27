@@ -116,7 +116,7 @@ body {
 }
 .container {
     background-color: var(--bg-secondary);
-    border-radius: 1.25rem; /* rounded-xl */
+    border-radius: 1.25rem; /* rounded-2xl */
     box-shadow: 0 10px 15px -3px var(--shadow-color-light), 0 4px 6px -2px var(--shadow-color-dark);
 }
 h1, h2, h3 {
@@ -244,7 +244,7 @@ tr:nth-child(even) {
     justify-content: center;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
     cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease;
+    transition: background-color 0.3s ease, transform 0.2s ease, color 0.3s ease; /* Added color transition */
     background-color: var(--btn-secondary-bg); /* Use theme color */
     color: var(--btn-secondary-text); /* Use theme color */
 }
