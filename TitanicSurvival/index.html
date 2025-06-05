@@ -56,6 +56,11 @@
                 <form id="predictionForm">
                     <input type="hidden" id="predictionId" value=""> <!-- For updates -->
 
+                    <div class="mb-4"> <!-- Name field full width -->
+                        <label for="name" class="block text-sm font-medium text-gray-700">Passenger Name:</label>
+                        <input type="text" id="name" placeholder="e.g., John Doe" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                         <div>
                             <label for="pclass" class="block text-sm font-medium text-gray-700">Passenger Class:</label>
@@ -152,7 +157,7 @@
 
         // --- Configuration ---
         const MODEL_URL = "https://raw.githubusercontent.com/DaveDiDon/AIOlympiad2025/main/TitanicSurvival/ml_models/titanic_model.joblib";
-        const FEATURE_ORDER = ['pclass', 'sex_male', 'age', 'sibsp', 'parch', 'fare'];
+        const FEATURE_ORDER = ['pclass', 'age', 'sibsp', 'parch', 'fare', 'sex_male']; 
         const STORAGE_KEY = 'titanicUserPredictions';
 
         const defaultBg = 'assets/titanic.gif';
@@ -218,8 +223,8 @@
                 await pyodide.loadPackage(["numpy", "pandas", "scikit-learn", "joblib"]);
                 updateStatus("Packages loaded. Fetching model file...");
 
-                if (MODEL_URL === "YOUR_MODEL_RAW_GITHUB_URL_HERE.joblib") {
-                    throw new Error("MODEL_URL not set. Please update it in script.js.");
+                if (MODEL_URL === "YOUR_MODEL_RAW_GITHUB_URL_HERE.joblib") { 
+                    throw new Error("MODEL_URL not set. Please update it in the script.");
                 }
 
                 let response = await fetch(MODEL_URL);
@@ -259,15 +264,22 @@ model
             
             pyodide.globals.set("current_input_data_js", pyodide.toPy(inputDataValues));
             pyodide.globals.set("model", titanicModel);
+            pyodide.globals.set("expected_feature_order_py", pyodide.toPy(FEATURE_ORDER));
 
             const pythonCodePredict = `
 import pandas as pd
-input_dict = current_input_data_js.to_dict()
-input_df = pd.DataFrame([input_dict])
-# Ensure feature order if your model is sensitive.
-# Scikit-learn is usually fine with dict keys if names match those during training.
-# feature_order_py = ${JSON.stringify(FEATURE_ORDER)}
-# input_df = input_df[feature_order_py]
+input_dict = current_input_data_js 
+input_df_initial = pd.DataFrame([input_dict])
+df_feature_order = expected_feature_order_py 
+try:
+    input_df = input_df_initial[df_feature_order]
+except KeyError as e:
+    missing_features = set(df_feature_order) - set(input_df_initial.columns)
+    extra_features = set(input_df_initial.columns) - set(df_feature_order)
+    err_msg = f"Feature mismatch: Missing: {missing_features if missing_features else 'None'}. "
+    err_msg += f"Extra in input: {extra_features if extra_features else 'None'}. "
+    err_msg += f"DataFrame columns: {list(input_df_initial.columns)}. Expected order: {df_feature_order}. Original error: {e}"
+    raise ValueError(err_msg)
 
 prediction_array = model.predict(input_df)
 prediction_proba_array = model.predict_proba(input_df)
@@ -282,7 +294,11 @@ prediction_proba_array = model.predict_proba(input_df)
                 return predictionResultPy.toJs({ dict_converter: Object.fromEntries });
             } catch (pyError) {
                 console.error("Python prediction error:", pyError);
-                showPredictionResult(`Prediction error in Python: ${pyError.message}`, "error");
+                let detailedErrorMessage = pyError.message;
+                if (pyError.pythonError && pyError.pythonError.message) { 
+                    detailedErrorMessage = pyError.pythonError.message;
+                }
+                showPredictionResult(`Prediction error in Python: ${detailedErrorMessage}`, "error");
                 return null;
             }
         }
@@ -316,7 +332,7 @@ prediction_proba_array = model.predict_proba(input_df)
         }
 
         function renderSavedPredictions() {
-            savedPredictionsListDiv.innerHTML = ''; // Clear existing list
+            savedPredictionsListDiv.innerHTML = ''; 
             if (userPredictions.length === 0) {
                 noSavedPredictionsP.style.display = 'block';
                 return;
@@ -331,7 +347,7 @@ prediction_proba_array = model.predict_proba(input_df)
                 let outcomeClass = pred.predictionOutcome === "Survived" ? "text-green-600" : "text-red-600";
 
                 card.innerHTML = `
-                    <h4 class="font-semibold text-md text-blue-700">Prediction ID: ...${pred.id.slice(-6)}</h4>
+                    <h4 class="font-semibold text-md text-blue-700">${pred.name || 'Unnamed Prediction'} (ID: ...${pred.id.slice(-6)})</h4>
                     <p class="text-sm text-gray-600">
                         Class: ${pred.features.pclass}, Sex: ${sexText}, Age: ${pred.features.age}, 
                         SibSp: ${pred.features.sibsp}, Parch: ${pred.features.parch}, Fare: ${pred.features.fare.toFixed(2)}
@@ -351,6 +367,7 @@ prediction_proba_array = model.predict_proba(input_df)
             const pred = userPredictions.find(p => p.id === predictionId);
             if (!pred) return;
 
+            document.getElementById('name').value = pred.name || ''; // Populate name
             document.getElementById('pclass').value = pred.features.pclass;
             document.getElementById('sex_male').value = pred.features.sex_male;
             document.getElementById('age').value = pred.features.age;
@@ -358,17 +375,25 @@ prediction_proba_array = model.predict_proba(input_df)
             document.getElementById('parch').value = pred.features.parch;
             document.getElementById('fare').value = pred.features.fare;
             
-            predictionIdInput.value = pred.id; // Set the hidden ID for update
+            predictionIdInput.value = pred.id; 
             formTitle.textContent = "Update Prediction";
             predictButton.textContent = "Save Updated Prediction";
             cancelUpdateButton.style.display = 'inline-block';
-            setBackground(defaultBg); // Reset background for editing
+            setBackground(defaultBg); 
             predictionResultDiv.style.display = 'none';
         }
         
         function resetFormToCreateMode() {
-            predictionForm.reset(); // Resets form fields to their initial values
-            predictionIdInput.value = ""; // Clear hidden ID
+            predictionForm.reset(); 
+            document.getElementById('name').value = ""; // Clear name field specifically
+            document.getElementById('pclass').value = "3"; 
+            document.getElementById('sex_male').value = "1";
+            document.getElementById('age').value = "30";
+            document.getElementById('sibsp').value = "0";
+            document.getElementById('parch').value = "0";
+            document.getElementById('fare').value = "15.0";
+
+            predictionIdInput.value = ""; 
             formTitle.textContent = "Make New Prediction";
             predictButton.textContent = "Predict Survival";
             cancelUpdateButton.style.display = 'none';
@@ -381,6 +406,14 @@ prediction_proba_array = model.predict_proba(input_df)
             event.preventDefault();
             predictButton.disabled = true;
             const currentPredictionId = predictionIdInput.value;
+            const passengerName = document.getElementById('name').value.trim(); // Get name
+
+            if (!passengerName && !currentPredictionId) { // Require name for new predictions
+                 showPredictionResult("Passenger Name is required for new predictions.", "error");
+                 predictButton.disabled = false;
+                 return;
+            }
+
 
             const features = {
                 pclass: parseInt(document.getElementById('pclass').value),
@@ -391,7 +424,6 @@ prediction_proba_array = model.predict_proba(input_df)
                 fare: parseFloat(document.getElementById('fare').value)
             };
 
-            // Basic validation (should be more robust in a real app)
             for (const key in features) {
                 if (isNaN(features[key])) {
                     showPredictionResult(`Invalid input for ${key}. Please enter valid numbers.`, "error");
@@ -407,30 +439,30 @@ prediction_proba_array = model.predict_proba(input_df)
                 const outcomeText = predictionData.prediction === 1 ? "Survived" : "Not Survived";
                 const confidence = predictionData.prediction === 1 ? predictionData.probability_survived : predictionData.probability_not_survived;
                 
-                showPredictionResult(`Prediction: ${outcomeText} (Confidence: ${(confidence * 100).toFixed(1)}%)`, outcomeText.toLowerCase().replace(' ', '-'));
+                showPredictionResult(`Prediction for ${passengerName || 'passenger'}: ${outcomeText} (Confidence: ${(confidence * 100).toFixed(1)}%)`, outcomeText.toLowerCase().replace(' ', '-'));
                 setBackground(outcomeText === "Survived" ? survivedBg : notSurvivedBg);
                 
                 const predictionRecord = {
                     id: currentPredictionId || generateId(),
+                    name: passengerName, // Save the name
                     features: features,
                     predictionOutcome: outcomeText,
                     confidence: confidence,
                     timestamp: new Date().toISOString()
                 };
 
-                if (currentPredictionId) { // Update existing
+                if (currentPredictionId) { 
                     const index = userPredictions.findIndex(p => p.id === currentPredictionId);
                     if (index !== -1) userPredictions[index] = predictionRecord;
                     updateStatus("Prediction updated and saved!");
-                } else { // Add new
+                } else { 
                     userPredictions.push(predictionRecord);
                     updateStatus("New prediction saved!");
                 }
                 savePredictionsToStorage();
-                resetFormToCreateMode(); // Reset after successful save/update
+                resetFormToCreateMode(); 
             } else {
                  updateStatus("Prediction failed. See message above.", true);
-                 // Background is handled by showPredictionResult in case of error
             }
             predictButton.disabled = false;
         });
@@ -444,7 +476,8 @@ prediction_proba_array = model.predict_proba(input_df)
             const predictionId = target.dataset.id;
 
             if (target.classList.contains('delete-btn') && predictionId) {
-                if (confirm(`Are you sure you want to delete prediction ...${predictionId.slice(-6)}?`)) {
+                const predToDelete = userPredictions.find(p => p.id === predictionId);
+                if (confirm(`Are you sure you want to delete prediction for ${predToDelete.name || `ID ...${predictionId.slice(-6)}`}?`)) {
                     userPredictions = userPredictions.filter(p => p.id !== predictionId);
                     savePredictionsToStorage();
                     showPredictionResult("Prediction deleted.", "info");
@@ -452,15 +485,16 @@ prediction_proba_array = model.predict_proba(input_df)
                 }
             } else if (target.classList.contains('update-btn') && predictionId) {
                 populateFormForUpdate(predictionId);
-                window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll to top to see form
+                window.scrollTo({ top: 0, behavior: 'smooth' }); 
             }
         });
 
         // --- Initialization ---
         document.addEventListener('DOMContentLoaded', () => {
-            predictButton.disabled = true; // Initially disabled
-            loadPredictionsFromStorage(); // Load saved predictions and update UI
-            initializePyodideAndLoadModel(); // This also sets initial background
+            predictButton.disabled = true; 
+            resetFormToCreateMode(); 
+            loadPredictionsFromStorage(); 
+            initializePyodideAndLoadModel(); 
         });
     </script>
 
