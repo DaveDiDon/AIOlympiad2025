@@ -4,10 +4,11 @@
 const statusMessage = document.getElementById('statusMessage');
 const predictionForm = document.getElementById('predictionForm');
 const formTitle = document.getElementById('formTitle');
-const formInputsWrapper = document.getElementById('formInputsWrapper'); // Wrapper for form fields
+const formInputsWrapper = document.getElementById('formInputsWrapper');
 const predictButton = document.getElementById('predictButton');
 const cancelUpdateButton = document.getElementById('cancelUpdateButton');
 const makeAnotherPredictionButton = document.getElementById('makeAnotherPredictionButton');
+const sharePredictionButton = document.getElementById('sharePredictionButton'); // New Share Button
 const predictionResultDiv = document.getElementById('predictionResult');
 const predictionIdInput = document.getElementById('predictionId'); 
 
@@ -30,6 +31,7 @@ const notSurvivedBg = 'assets/titanic-failed.gif';
 let pyodide = null;
 let titanicModel = null;
 let userPredictions = []; 
+let latestPredictionDataForShare = null; // To store data for the share function
 
 // --- Utility Functions ---
 function setBackground(imageName) {
@@ -219,7 +221,7 @@ function renderSavedPredictions() {
 
         card.innerHTML = `
             <h4 class="font-semibold text-blue-700">${pred.name || 'Unnamed Prediction'}</h4>
-            <p class="text-xs text-gray-500 mb-1"></p>
+            <p class="text-xs text-gray-500 mb-1">ID: ...${pred.id.slice(-6)}</p>
             <p class="text-gray-600">
                 Class: ${pred.features.pclass}, Sex: ${sexText}, Age: ${pred.features.age}
             </p>
@@ -254,10 +256,11 @@ function populateFormForUpdate(predictionId) {
     predictButton.textContent = "Save Updated Prediction";
     cancelUpdateButton.style.display = 'inline-block';
     
-    formInputsWrapper.style.display = 'block'; // Ensure form inputs are visible
+    formInputsWrapper.style.display = 'block'; 
     predictButton.style.display = 'inline-block';
-    makeAnotherPredictionButton.style.display = 'none'; // Hide "Make Another" button
-    predictionResultDiv.style.display = 'none'; // Hide previous prediction result
+    makeAnotherPredictionButton.style.display = 'none';
+    sharePredictionButton.style.display = 'none'; // Hide share button during update
+    predictionResultDiv.style.display = 'none'; 
     setBackground(defaultBg); 
 }
 
@@ -275,18 +278,19 @@ function resetFormAndPrepareForNewPrediction() {
     formTitle.textContent = "Make New Prediction";
     predictButton.textContent = "Predict Survival";
     
-    formInputsWrapper.style.display = 'block'; // Show form inputs
-    predictButton.style.display = 'inline-block'; // Show predict button
-    cancelUpdateButton.style.display = 'none'; // Hide cancel update button
-    makeAnotherPredictionButton.style.display = 'none'; // Hide make another button
-    predictionResultDiv.style.display = 'none'; // Hide last prediction result
-    setBackground(defaultBg); // Reset background
+    formInputsWrapper.style.display = 'block'; 
+    predictButton.style.display = 'inline-block'; 
+    cancelUpdateButton.style.display = 'none'; 
+    makeAnotherPredictionButton.style.display = 'none'; 
+    sharePredictionButton.style.display = 'none'; // Hide share button
+    predictionResultDiv.style.display = 'none'; 
+    setBackground(defaultBg); 
 }
 
 // --- Event Handlers ---
 predictionForm.addEventListener('submit', async function(event) {
     event.preventDefault();
-    predictButton.disabled = true; // Disable while processing
+    predictButton.disabled = true; 
     const currentPredictionId = predictionIdInput.value;
     const passengerName = document.getElementById('name').value.trim(); 
 
@@ -315,16 +319,15 @@ predictionForm.addEventListener('submit', async function(event) {
     
     updateStatus(`Processing ${currentPredictionId ? 'updated' : 'new'} prediction...`);
     const predictionData = await makePrediction(features);
+    latestPredictionDataForShare = null; // Reset before new prediction
 
     if (predictionData) {
         const outcomeText = predictionData.prediction === 1 ? "Survived" : "Not Survived";
         const confidence = predictionData.prediction === 1 ? predictionData.probability_survived : predictionData.probability_not_survived;
         
-        // Display the prediction outcome message
         showPredictionResult(`Prediction for ${passengerName || 'Selected Passenger'}: ${outcomeText} (Confidence: ${(confidence * 100).toFixed(1)}%)`, outcomeText.toLowerCase().replace(' ', '-'));
         setBackground(outcomeText === "Survived" ? survivedBg : notSurvivedBg);
         
-        // Update form title based on prediction
         if (outcomeText === "Survived") {
             formTitle.textContent = `🎉 Congratulations, ${passengerName || 'Passenger'}!`;
         } else {
@@ -339,6 +342,7 @@ predictionForm.addEventListener('submit', async function(event) {
             confidence: confidence,
             timestamp: new Date().toISOString()
         };
+        latestPredictionDataForShare = { ...predictionRecord }; // Store for sharing
 
         if (currentPredictionId) { 
             const index = userPredictions.findIndex(p => p.id === currentPredictionId);
@@ -350,21 +354,21 @@ predictionForm.addEventListener('submit', async function(event) {
         }
         savePredictionsToStorage();
         
-        // Collapse form and show "Make Another Prediction" button
         formInputsWrapper.style.display = 'none';
         predictButton.style.display = 'none';
         cancelUpdateButton.style.display = 'none';
         makeAnotherPredictionButton.style.display = 'block';
+        sharePredictionButton.style.display = 'block'; // Show share button
         
     } else {
          updateStatus("Prediction failed. See message above.", true);
-         // If prediction failed, keep form visible for correction
          formInputsWrapper.style.display = 'block';
          predictButton.style.display = 'inline-block';
          if(currentPredictionId) cancelUpdateButton.style.display = 'inline-block';
          makeAnotherPredictionButton.style.display = 'none';
+         sharePredictionButton.style.display = 'none'; // Hide share button on failure
     }
-    predictButton.disabled = false; // Re-enable after processing
+    predictButton.disabled = false; 
 });
 
 cancelUpdateButton.addEventListener('click', () => {
@@ -373,6 +377,16 @@ cancelUpdateButton.addEventListener('click', () => {
 
 makeAnotherPredictionButton.addEventListener('click', () => {
     resetFormAndPrepareForNewPrediction();
+});
+
+sharePredictionButton.addEventListener('click', () => {
+    if (latestPredictionDataForShare && typeof generateAndDownloadPredictionImage === 'function') {
+        generateAndDownloadPredictionImage(latestPredictionDataForShare);
+    } else if (!latestPredictionDataForShare) {
+        alert("No prediction data available to share. Please make a prediction first.");
+    } else {
+        alert("Share image function is not available. Check if shareImage.js is loaded.");
+    }
 });
 
 
@@ -387,9 +401,12 @@ savedPredictionsListDiv.addEventListener('click', function(event) {
             savePredictionsToStorage();
             showPredictionResult("Prediction deleted.", "info");
             setBackground(defaultBg);
-            // If the form was showing the deleted prediction for update, reset it
-            if (predictionIdInput.value === predictionId) {
+            if (predictionIdInput.value === predictionId) { // If the deleted item was being updated
                  resetFormAndPrepareForNewPrediction();
+            }
+            if (latestPredictionDataForShare && latestPredictionDataForShare.id === predictionId) {
+                latestPredictionDataForShare = null; // Clear share data if it was the deleted one
+                sharePredictionButton.style.display = 'none';
             }
         }
     } else if (target.classList.contains('update-btn') && predictionId) {
@@ -401,7 +418,7 @@ savedPredictionsListDiv.addEventListener('click', function(event) {
 // --- Initialization ---
 document.addEventListener('DOMContentLoaded', () => {
     predictButton.disabled = true; 
-    resetFormAndPrepareForNewPrediction(); // Initial state for the form
+    resetFormAndPrepareForNewPrediction(); 
     loadPredictionsFromStorage(); 
     initializePyodideAndLoadModel(); 
 });
