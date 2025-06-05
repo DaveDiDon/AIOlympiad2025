@@ -1,34 +1,468 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Titanic Survival Prediction</title>
-    <link rel="stylesheet" href="style.css"> </head>
-<body>
-    <div class="container">
-        <h1>🚢 Titanic Survival Prediction</h1>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Titanic Survival Predictor Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles if needed, though Tailwind should cover most */
+        body {
+            transition: background-image 0.5s ease-in-out;
+            background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+        /* Simple custom scrollbar for better looks with dark themes if body bg is dark */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f110; /* Slightly transparent track */
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+        /* Style for the pseudo-gauge bar */
+        .gauge-bar-background {
+            background-color: #e9ecef; /* Light grey for the track */
+        }
+        .gauge-bar-fill {
+            transition: width 0.5s ease-in-out; /* Animate the fill */
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
 
-        <label for="pclass">Passenger Class (1, 2, or 3):</label>
-        <select id="pclass">
-            <option value="1">1st Class</option>
-            <option value="2">2nd Class</option>
-            <option value="3" selected>3rd Class</option> </select>
+    <div class="container mx-auto p-4 md:p-8 max-w-4xl">
+        
+        <!-- Header -->
+        <header class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-blue-700">🚢 Titanic Survival Predictor Pro 🚢</h1>
+            <p id="statusMessage" class="text-gray-600 mt-2">Loading Pyodide & Model... Please Wait.</p>
+        </header>
 
-        <label for="sex">Sex:</label>
-        <select id="sex">
-            <option value="0">Female</option>
-            <option value="1" selected>Male</option> </select>
+        <!-- Main Content Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
-        <label for="age">Age:</label>
-        <input type="number" id="age" placeholder="e.g., 30" step="0.1" value="30"> <label for="sibsp">Siblings/Spouses Aboard:</label>
-        <input type="number" id="sibsp" placeholder="e.g., 1" step="1" value="0"> <label for="parch">Parents/Children Aboard:</label>
-        <input type="number" id="parch" placeholder="e.g., 0" step="1" value="0"> <label for="fare">Fare Paid:</label>
-        <input type="number" id="fare" placeholder="e.g., 30.0" step="0.01" value="15.0"> <button id="predictButton">Predict Survival</button>
+            <!-- Prediction Form & Gauge (Left/Main Column) -->
+            <div class="md:col-span-2 bg-white p-6 rounded-xl shadow-lg">
+                <h2 id="formTitle" class="text-2xl font-semibold text-gray-800 mb-6">Make New Prediction</h2>
+                <form id="predictionForm">
+                    <input type="hidden" id="predictionId" value=""> <!-- For updates -->
 
-        <div id="status">Loading Pyodide and Model... Please wait.</div>
-        <div id="result"></div> </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label for="pclass" class="block text-sm font-medium text-gray-700">Passenger Class:</label>
+                            <select id="pclass" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                                <option value="1">1st Class</option>
+                                <option value="2">2nd Class</option>
+                                <option value="3" selected>3rd Class</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="sex_male" class="block text-sm font-medium text-gray-700">Sex:</label>
+                            <select id="sex_male" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                                <option value="0">Female</option>
+                                <option value="1" selected>Male</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label for="age" class="block text-sm font-medium text-gray-700">Age:</label>
+                            <input type="number" id="age" value="30" step="0.1" placeholder="e.g., 30" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                        </div>
+                        <div>
+                            <label for="sibsp" class="block text-sm font-medium text-gray-700">Siblings/Spouses:</label>
+                            <input type="number" id="sibsp" value="0" step="1" placeholder="e.g., 1" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                        <div>
+                            <label for="parch" class="block text-sm font-medium text-gray-700">Parents/Children:</label>
+                            <input type="number" id="parch" value="0" step="1" placeholder="e.g., 0" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                        </div>
+                        <div>
+                            <label for="fare" class="block text-sm font-medium text-gray-700">Fare Paid:</label>
+                            <input type="number" id="fare" value="15.0" step="0.01" placeholder="e.g., 30.0" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                        </div>
+                    </div>
+
+                    <button type="submit" id="predictButton" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-md shadow-md transition duration-150 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed">
+                        Predict Survival
+                    </button>
+                    <button type="button" id="cancelUpdateButton" class="w-full mt-2 bg-gray-500 hover:bg-gray-600 text-white font-semibold py-3 px-4 rounded-md shadow-md transition duration-150 ease-in-out" style="display:none;">
+                        Cancel Update
+                    </button>
+                </form>
+
+                <div id="predictionResult" class="mt-6 p-4 rounded-md text-center font-semibold text-lg" style="display:none;">
+                    <!-- Result will be shown here -->
+                </div>
+
+                <!-- Survival Rate Gauge -->
+                <div class="mt-8 pt-6 border-t border-gray-200">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-3 text-center">Overall Survival Rate (Saved Predictions)</h3>
+                    <div id="survivalGaugeText" class="text-3xl font-bold text-center text-blue-600 mb-2">N/A</div>
+                    <div class="w-full h-6 bg-gray-200 rounded-full overflow-hidden gauge-bar-background">
+                        <div id="survivalGaugeBar" class="h-full bg-green-500 gauge-bar-fill" style="width: 0%;"></div>
+                    </div>
+                    <p id="gaugeDetailText" class="text-sm text-gray-500 text-center mt-1">(Based on 0 predictions)</p>
+                </div>
+            </div>
+
+            <!-- Saved Predictions List (Right/Side Column) -->
+            <div class="md:col-span-1 bg-white p-6 rounded-xl shadow-lg">
+                <h2 class="text-2xl font-semibold text-gray-800 mb-6 text-center">Saved Predictions</h2>
+                <div id="savedPredictionsList" class="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
+                    <!-- Predictions will be listed here -->
+                    <p id="noSavedPredictions" class="text-gray-500 text-center">No predictions saved yet.</p>
+                </div>
+            </div>
+
+        </div> <!-- End Main Content Grid -->
+
+    </div> <!-- End Container -->
 
     <script src="https://cdn.jsdelivr.net/pyodide/v0.25.1/full/pyodide.js"></script>
-    <script src="script.js"></script>
+    <script>
+        // --- Constants and DOM Elements ---
+        const statusMessage = document.getElementById('statusMessage');
+        const predictionForm = document.getElementById('predictionForm');
+        const formTitle = document.getElementById('formTitle');
+        const predictButton = document.getElementById('predictButton');
+        const cancelUpdateButton = document.getElementById('cancelUpdateButton');
+        const predictionResultDiv = document.getElementById('predictionResult');
+        const predictionIdInput = document.getElementById('predictionId'); // Hidden input for update
+
+        const savedPredictionsListDiv = document.getElementById('savedPredictionsList');
+        const noSavedPredictionsP = document.getElementById('noSavedPredictions');
+        
+        const survivalGaugeText = document.getElementById('survivalGaugeText');
+        const survivalGaugeBar = document.getElementById('survivalGaugeBar');
+        const gaugeDetailText = document.getElementById('gaugeDetailText');
+
+        // --- Configuration ---
+        const MODEL_URL = "https://raw.githubusercontent.com/DaveDiDon/AIOlympiad2025/main/TitanicSurvival/ml_models/titanic_model.joblib";
+        const FEATURE_ORDER = ['pclass', 'sex_male', 'age', 'sibsp', 'parch', 'fare'];
+        const STORAGE_KEY = 'titanicUserPredictions';
+
+        const defaultBg = 'assets/titanic.gif';
+        const survivedBg = 'assets/titanic-pass.gif';
+        const notSurvivedBg = 'assets/titanic-failed.gif';
+
+        let pyodide = null;
+        let titanicModel = null;
+        let userPredictions = []; // Array to hold saved predictions
+
+        // --- Utility Functions ---
+        function setBackground(imageName) {
+            document.body.style.backgroundImage = `url('${imageName}')`;
+        }
+
+        function updateStatus(message, isError = false) {
+            statusMessage.textContent = message;
+            statusMessage.className = isError ? 'text-red-600 mt-2' : 'text-gray-600 mt-2';
+        }
+
+        function showPredictionResult(message, outcomeType = "info") {
+            predictionResultDiv.textContent = message;
+            predictionResultDiv.style.display = 'block';
+            
+            predictionResultDiv.className = 'mt-6 p-4 rounded-md text-center font-semibold text-lg '; // Base classes
+            if (outcomeType === "survived") {
+                predictionResultDiv.classList.add('bg-green-100', 'text-green-700');
+            } else if (outcomeType === "not-survived") {
+                predictionResultDiv.classList.add('bg-red-100', 'text-red-700');
+            } else if (outcomeType === "error") {
+                predictionResultDiv.classList.add('bg-red-100', 'text-red-700');
+            } else { // info
+                 predictionResultDiv.classList.add('bg-blue-100', 'text-blue-700');
+            }
+        }
+        
+        function generateId() {
+            return Date.now().toString(36) + Math.random().toString(36).substring(2);
+        }
+
+        // --- localStorage CRUD ---
+        function loadPredictionsFromStorage() {
+            const stored = localStorage.getItem(STORAGE_KEY);
+            userPredictions = stored ? JSON.parse(stored) : [];
+            renderSavedPredictions();
+            updateSurvivalGauge();
+        }
+
+        function savePredictionsToStorage() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(userPredictions));
+            renderSavedPredictions();
+            updateSurvivalGauge();
+        }
+
+        // --- Pyodide and Model Initialization ---
+        async function initializePyodideAndLoadModel() {
+            setBackground(defaultBg);
+            updateStatus("Initializing Pyodide runtime...");
+            predictButton.disabled = true;
+            try {
+                pyodide = await loadPyodide({ indexURL: "https://cdn.jsdelivr.net/pyodide/v0.25.1/full/" });
+                updateStatus("Pyodide loaded. Loading Python packages...");
+                await pyodide.loadPackage(["numpy", "pandas", "scikit-learn", "joblib"]);
+                updateStatus("Packages loaded. Fetching model file...");
+
+                if (MODEL_URL === "YOUR_MODEL_RAW_GITHUB_URL_HERE.joblib") {
+                    throw new Error("MODEL_URL not set. Please update it in script.js.");
+                }
+
+                let response = await fetch(MODEL_URL);
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch model (status ${response.status}). Check MODEL_URL and ensure it's a raw file link with CORS enabled.`);
+                }
+                let modelBytes = await response.arrayBuffer();
+                updateStatus("Model file fetched. Loading model into Pyodide...");
+                pyodide.FS.writeFile("titanic_model.joblib", new Uint8Array(modelBytes), { encoding: "binary" });
+
+                const pythonCodeLoadModel = `
+import joblib
+model = joblib.load("titanic_model.joblib")
+model
+                `;
+                titanicModel = await pyodide.runPythonAsync(pythonCodeLoadModel);
+
+                if (titanicModel) {
+                    updateStatus("Model ready! You can now make predictions.");
+                    predictButton.disabled = false;
+                } else {
+                    throw new Error("Model could not be loaded from Python.");
+                }
+            } catch (error) {
+                updateStatus(`Initialization Error: ${error.message}`, true);
+                console.error("Initialization Error:", error);
+                showPredictionResult(`Initialization failed: ${error.message}. Check console.`, "error");
+            }
+        }
+
+        // --- Prediction Logic ---
+        async function makePrediction(inputDataValues) {
+            if (!pyodide || !titanicModel) {
+                showPredictionResult("Pyodide or model not yet loaded.", "error");
+                return null;
+            }
+            
+            pyodide.globals.set("current_input_data_js", pyodide.toPy(inputDataValues));
+            pyodide.globals.set("model", titanicModel);
+
+            const pythonCodePredict = `
+import pandas as pd
+input_dict = current_input_data_js.to_dict()
+input_df = pd.DataFrame([input_dict])
+# Ensure feature order if your model is sensitive.
+# Scikit-learn is usually fine with dict keys if names match those during training.
+# feature_order_py = ${JSON.stringify(FEATURE_ORDER)}
+# input_df = input_df[feature_order_py]
+
+prediction_array = model.predict(input_df)
+prediction_proba_array = model.predict_proba(input_df)
+{
+    "prediction": int(prediction_array[0]),
+    "probability_not_survived": float(prediction_proba_array[0][0]),
+    "probability_survived": float(prediction_proba_array[0][1])
+}
+            `;
+            try {
+                let predictionResultPy = await pyodide.runPythonAsync(pythonCodePredict);
+                return predictionResultPy.toJs({ dict_converter: Object.fromEntries });
+            } catch (pyError) {
+                console.error("Python prediction error:", pyError);
+                showPredictionResult(`Prediction error in Python: ${pyError.message}`, "error");
+                return null;
+            }
+        }
+
+        // --- UI Rendering and Updates ---
+        function updateSurvivalGauge() {
+            if (userPredictions.length === 0) {
+                survivalGaugeText.textContent = "N/A";
+                survivalGaugeBar.style.width = "0%";
+                survivalGaugeBar.classList.remove('bg-green-500', 'bg-red-500', 'bg-yellow-500');
+                survivalGaugeBar.classList.add('bg-gray-300');
+                gaugeDetailText.textContent = "(Based on 0 predictions)";
+                return;
+            }
+
+            const survivedCount = userPredictions.filter(p => p.predictionOutcome === "Survived").length;
+            const survivalRate = (survivedCount / userPredictions.length) * 100;
+
+            survivalGaugeText.textContent = `${survivalRate.toFixed(1)}%`;
+            survivalGaugeBar.style.width = `${survivalRate}%`;
+            gaugeDetailText.textContent = `(${survivedCount} Survived / ${userPredictions.length} Total)`;
+
+            survivalGaugeBar.classList.remove('bg-gray-300', 'bg-red-500', 'bg-yellow-500', 'bg-green-500');
+            if (survivalRate >= 75) {
+                survivalGaugeBar.classList.add('bg-green-500');
+            } else if (survivalRate >= 40) {
+                survivalGaugeBar.classList.add('bg-yellow-500');
+            } else {
+                survivalGaugeBar.classList.add('bg-red-500');
+            }
+        }
+
+        function renderSavedPredictions() {
+            savedPredictionsListDiv.innerHTML = ''; // Clear existing list
+            if (userPredictions.length === 0) {
+                noSavedPredictionsP.style.display = 'block';
+                return;
+            }
+            noSavedPredictionsP.style.display = 'none';
+
+            userPredictions.forEach(pred => {
+                const card = document.createElement('div');
+                card.className = 'p-4 border border-gray-200 rounded-lg shadow-sm bg-gray-50';
+                
+                let sexText = pred.features.sex_male === 1 ? "Male" : "Female";
+                let outcomeClass = pred.predictionOutcome === "Survived" ? "text-green-600" : "text-red-600";
+
+                card.innerHTML = `
+                    <h4 class="font-semibold text-md text-blue-700">Prediction ID: ...${pred.id.slice(-6)}</h4>
+                    <p class="text-sm text-gray-600">
+                        Class: ${pred.features.pclass}, Sex: ${sexText}, Age: ${pred.features.age}, 
+                        SibSp: ${pred.features.sibsp}, Parch: ${pred.features.parch}, Fare: ${pred.features.fare.toFixed(2)}
+                    </p>
+                    <p class="font-semibold mt-1 ${outcomeClass}">Outcome: ${pred.predictionOutcome}</p>
+                    <p class="text-xs text-gray-500">Confidence: ${(pred.confidence * 100).toFixed(1)}%</p>
+                    <div class="mt-3 space-x-2 text-right">
+                        <button data-id="${pred.id}" class="update-btn text-xs bg-yellow-500 hover:bg-yellow-600 text-white py-1 px-3 rounded-md">Update</button>
+                        <button data-id="${pred.id}" class="delete-btn text-xs bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded-md">Delete</button>
+                    </div>
+                `;
+                savedPredictionsListDiv.appendChild(card);
+            });
+        }
+
+        function populateFormForUpdate(predictionId) {
+            const pred = userPredictions.find(p => p.id === predictionId);
+            if (!pred) return;
+
+            document.getElementById('pclass').value = pred.features.pclass;
+            document.getElementById('sex_male').value = pred.features.sex_male;
+            document.getElementById('age').value = pred.features.age;
+            document.getElementById('sibsp').value = pred.features.sibsp;
+            document.getElementById('parch').value = pred.features.parch;
+            document.getElementById('fare').value = pred.features.fare;
+            
+            predictionIdInput.value = pred.id; // Set the hidden ID for update
+            formTitle.textContent = "Update Prediction";
+            predictButton.textContent = "Save Updated Prediction";
+            cancelUpdateButton.style.display = 'inline-block';
+            setBackground(defaultBg); // Reset background for editing
+            predictionResultDiv.style.display = 'none';
+        }
+        
+        function resetFormToCreateMode() {
+            predictionForm.reset(); // Resets form fields to their initial values
+            predictionIdInput.value = ""; // Clear hidden ID
+            formTitle.textContent = "Make New Prediction";
+            predictButton.textContent = "Predict Survival";
+            cancelUpdateButton.style.display = 'none';
+            predictionResultDiv.style.display = 'none';
+            setBackground(defaultBg);
+        }
+
+        // --- Event Handlers ---
+        predictionForm.addEventListener('submit', async function(event) {
+            event.preventDefault();
+            predictButton.disabled = true;
+            const currentPredictionId = predictionIdInput.value;
+
+            const features = {
+                pclass: parseInt(document.getElementById('pclass').value),
+                sex_male: parseInt(document.getElementById('sex_male').value),
+                age: parseFloat(document.getElementById('age').value),
+                sibsp: parseInt(document.getElementById('sibsp').value),
+                parch: parseInt(document.getElementById('parch').value),
+                fare: parseFloat(document.getElementById('fare').value)
+            };
+
+            // Basic validation (should be more robust in a real app)
+            for (const key in features) {
+                if (isNaN(features[key])) {
+                    showPredictionResult(`Invalid input for ${key}. Please enter valid numbers.`, "error");
+                    predictButton.disabled = false;
+                    return;
+                }
+            }
+            
+            updateStatus(`Processing ${currentPredictionId ? 'updated' : 'new'} prediction...`);
+            const predictionData = await makePrediction(features);
+
+            if (predictionData) {
+                const outcomeText = predictionData.prediction === 1 ? "Survived" : "Not Survived";
+                const confidence = predictionData.prediction === 1 ? predictionData.probability_survived : predictionData.probability_not_survived;
+                
+                showPredictionResult(`Prediction: ${outcomeText} (Confidence: ${(confidence * 100).toFixed(1)}%)`, outcomeText.toLowerCase().replace(' ', '-'));
+                setBackground(outcomeText === "Survived" ? survivedBg : notSurvivedBg);
+                
+                const predictionRecord = {
+                    id: currentPredictionId || generateId(),
+                    features: features,
+                    predictionOutcome: outcomeText,
+                    confidence: confidence,
+                    timestamp: new Date().toISOString()
+                };
+
+                if (currentPredictionId) { // Update existing
+                    const index = userPredictions.findIndex(p => p.id === currentPredictionId);
+                    if (index !== -1) userPredictions[index] = predictionRecord;
+                    updateStatus("Prediction updated and saved!");
+                } else { // Add new
+                    userPredictions.push(predictionRecord);
+                    updateStatus("New prediction saved!");
+                }
+                savePredictionsToStorage();
+                resetFormToCreateMode(); // Reset after successful save/update
+            } else {
+                 updateStatus("Prediction failed. See message above.", true);
+                 // Background is handled by showPredictionResult in case of error
+            }
+            predictButton.disabled = false;
+        });
+
+        cancelUpdateButton.addEventListener('click', () => {
+            resetFormToCreateMode();
+        });
+
+        savedPredictionsListDiv.addEventListener('click', function(event) {
+            const target = event.target;
+            const predictionId = target.dataset.id;
+
+            if (target.classList.contains('delete-btn') && predictionId) {
+                if (confirm(`Are you sure you want to delete prediction ...${predictionId.slice(-6)}?`)) {
+                    userPredictions = userPredictions.filter(p => p.id !== predictionId);
+                    savePredictionsToStorage();
+                    showPredictionResult("Prediction deleted.", "info");
+                    setBackground(defaultBg);
+                }
+            } else if (target.classList.contains('update-btn') && predictionId) {
+                populateFormForUpdate(predictionId);
+                window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll to top to see form
+            }
+        });
+
+        // --- Initialization ---
+        document.addEventListener('DOMContentLoaded', () => {
+            predictButton.disabled = true; // Initially disabled
+            loadPredictionsFromStorage(); // Load saved predictions and update UI
+            initializePyodideAndLoadModel(); // This also sets initial background
+        });
+    </script>
+
 </body>
 </html>
