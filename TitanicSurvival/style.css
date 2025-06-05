@@ -1,11 +1,31 @@
 /* style.css */
+body::before {
+    content: "";
+    position: fixed; /* Covers the entire viewport */
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.55); /* White overlay with 55% opacity */
+    z-index: -1; /* Place it behind all other content but above the background image */
+}
+
 body {
+    /* Background image is set by JS */
     transition: background-image 0.5s ease-in-out;
     background-size: cover;
     background-position: center center;
     background-repeat: no-repeat;
     background-attachment: fixed;
-    /* Default background will be set by JS if assets folder is present */
+    position: relative; /* Needed for z-index stacking of ::before pseudo-element */
+    min-height: 100vh;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
+/* Ensure .container and its children are on top of the overlay */
+.container {
+    position: relative;
+    z-index: 1;
 }
 
 /* Simple custom scrollbar */
@@ -13,7 +33,7 @@ body {
     width: 8px;
 }
 ::-webkit-scrollbar-track {
-    background: #f1f1f110; /* Slightly transparent track for dark backgrounds */
+    background: #f1f1f110; 
 }
 ::-webkit-scrollbar-thumb {
     background: #888;
@@ -21,9 +41,4 @@ body {
 }
 ::-webkit-scrollbar-thumb:hover {
     background: #555;
-}
-
-/* Ensure consistent font from Tailwind if not applied by default to all elements */
-html {
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }

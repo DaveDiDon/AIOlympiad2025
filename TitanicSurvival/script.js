@@ -4,8 +4,10 @@
 const statusMessage = document.getElementById('statusMessage');
 const predictionForm = document.getElementById('predictionForm');
 const formTitle = document.getElementById('formTitle');
+const formInputsWrapper = document.getElementById('formInputsWrapper'); // Wrapper for form fields
 const predictButton = document.getElementById('predictButton');
 const cancelUpdateButton = document.getElementById('cancelUpdateButton');
+const makeAnotherPredictionButton = document.getElementById('makeAnotherPredictionButton');
 const predictionResultDiv = document.getElementById('predictionResult');
 const predictionIdInput = document.getElementById('predictionId'); 
 
@@ -41,7 +43,6 @@ function setBackground(imageName) {
     };
     imgTest.src = imageName; 
 }
-
 
 function updateStatus(message, isError = false) {
     statusMessage.textContent = message;
@@ -249,14 +250,18 @@ function populateFormForUpdate(predictionId) {
     document.getElementById('fare').value = pred.features.fare;
     
     predictionIdInput.value = pred.id; 
-    formTitle.textContent = "Update Prediction"; // Title for update mode
+    formTitle.textContent = "Update Prediction"; 
     predictButton.textContent = "Save Updated Prediction";
     cancelUpdateButton.style.display = 'inline-block';
+    
+    formInputsWrapper.style.display = 'block'; // Ensure form inputs are visible
+    predictButton.style.display = 'inline-block';
+    makeAnotherPredictionButton.style.display = 'none'; // Hide "Make Another" button
+    predictionResultDiv.style.display = 'none'; // Hide previous prediction result
     setBackground(defaultBg); 
-    predictionResultDiv.style.display = 'none';
 }
 
-function resetFormToCreateMode(lastPredictionOutcome = null, passengerName = null) {
+function resetFormAndPrepareForNewPrediction() {
     predictionForm.reset(); 
     document.getElementById('name').value = ""; 
     document.getElementById('pclass').value = "3"; 
@@ -267,34 +272,21 @@ function resetFormToCreateMode(lastPredictionOutcome = null, passengerName = nul
     document.getElementById('fare').value = "15.0";
 
     predictionIdInput.value = ""; 
-
-    if (lastPredictionOutcome && passengerName) {
-        if (lastPredictionOutcome === "Survived") {
-            formTitle.textContent = `Congratulations, ${passengerName}!`;
-        } else if (lastPredictionOutcome === "Not Survived") {
-            formTitle.textContent = `Unfortunately, ${passengerName}...`;
-        } else {
-            formTitle.textContent = "Make New Prediction";
-        }
-    } else {
-        formTitle.textContent = "Make New Prediction";
-    }
-    
+    formTitle.textContent = "Make New Prediction";
     predictButton.textContent = "Predict Survival";
-    cancelUpdateButton.style.display = 'none';
-    // Do not hide predictionResultDiv here, it shows the last prediction.
-    // If you want to clear it immediately on reset, uncomment the next line:
-    // predictionResultDiv.style.display = 'none'; 
-    // Background is usually set based on prediction or reset if form is fully cleared for new entry.
-    // If coming from a successful prediction, the background reflects that.
-    // If "Cancel Update" is clicked, then reset background:
-    // setBackground(defaultBg); // This line is now in cancelUpdateButton's handler
+    
+    formInputsWrapper.style.display = 'block'; // Show form inputs
+    predictButton.style.display = 'inline-block'; // Show predict button
+    cancelUpdateButton.style.display = 'none'; // Hide cancel update button
+    makeAnotherPredictionButton.style.display = 'none'; // Hide make another button
+    predictionResultDiv.style.display = 'none'; // Hide last prediction result
+    setBackground(defaultBg); // Reset background
 }
 
 // --- Event Handlers ---
 predictionForm.addEventListener('submit', async function(event) {
     event.preventDefault();
-    predictButton.disabled = true;
+    predictButton.disabled = true; // Disable while processing
     const currentPredictionId = predictionIdInput.value;
     const passengerName = document.getElementById('name').value.trim(); 
 
@@ -324,16 +316,21 @@ predictionForm.addEventListener('submit', async function(event) {
     updateStatus(`Processing ${currentPredictionId ? 'updated' : 'new'} prediction...`);
     const predictionData = await makePrediction(features);
 
-    let finalOutcomeTextForTitle = null;
-
     if (predictionData) {
         const outcomeText = predictionData.prediction === 1 ? "Survived" : "Not Survived";
-        finalOutcomeTextForTitle = outcomeText; // Store for title update
         const confidence = predictionData.prediction === 1 ? predictionData.probability_survived : predictionData.probability_not_survived;
         
+        // Display the prediction outcome message
         showPredictionResult(`Prediction for ${passengerName || 'Selected Passenger'}: ${outcomeText} (Confidence: ${(confidence * 100).toFixed(1)}%)`, outcomeText.toLowerCase().replace(' ', '-'));
         setBackground(outcomeText === "Survived" ? survivedBg : notSurvivedBg);
         
+        // Update form title based on prediction
+        if (outcomeText === "Survived") {
+            formTitle.textContent = `🎉 Congratulations, ${passengerName || 'Passenger'}!`;
+        } else {
+            formTitle.textContent = `😥 Unfortunately, ${passengerName || 'Passenger'}...`;
+        }
+
         const predictionRecord = {
             id: currentPredictionId || generateId(),
             name: passengerName, 
@@ -352,19 +349,32 @@ predictionForm.addEventListener('submit', async function(event) {
             updateStatus("New prediction saved!");
         }
         savePredictionsToStorage();
-        resetFormToCreateMode(finalOutcomeTextForTitle, passengerName || "Passenger"); 
+        
+        // Collapse form and show "Make Another Prediction" button
+        formInputsWrapper.style.display = 'none';
+        predictButton.style.display = 'none';
+        cancelUpdateButton.style.display = 'none';
+        makeAnotherPredictionButton.style.display = 'block';
+        
     } else {
-            updateStatus("Prediction failed. See message above.", true);
-            resetFormToCreateMode(); // Reset form even on failure, but keep default title
+         updateStatus("Prediction failed. See message above.", true);
+         // If prediction failed, keep form visible for correction
+         formInputsWrapper.style.display = 'block';
+         predictButton.style.display = 'inline-block';
+         if(currentPredictionId) cancelUpdateButton.style.display = 'inline-block';
+         makeAnotherPredictionButton.style.display = 'none';
     }
-    predictButton.disabled = false;
+    predictButton.disabled = false; // Re-enable after processing
 });
 
 cancelUpdateButton.addEventListener('click', () => {
-    resetFormToCreateMode(); // This will set title to "Make New Prediction"
-    setBackground(defaultBg); // Explicitly reset background
-    predictionResultDiv.style.display = 'none'; // Hide any previous result
+    resetFormAndPrepareForNewPrediction(); 
 });
+
+makeAnotherPredictionButton.addEventListener('click', () => {
+    resetFormAndPrepareForNewPrediction();
+});
+
 
 savedPredictionsListDiv.addEventListener('click', function(event) {
     const target = event.target;
@@ -377,7 +387,10 @@ savedPredictionsListDiv.addEventListener('click', function(event) {
             savePredictionsToStorage();
             showPredictionResult("Prediction deleted.", "info");
             setBackground(defaultBg);
-            resetFormToCreateMode(); // Reset form title to default
+            // If the form was showing the deleted prediction for update, reset it
+            if (predictionIdInput.value === predictionId) {
+                 resetFormAndPrepareForNewPrediction();
+            }
         }
     } else if (target.classList.contains('update-btn') && predictionId) {
         populateFormForUpdate(predictionId);
@@ -388,7 +401,7 @@ savedPredictionsListDiv.addEventListener('click', function(event) {
 // --- Initialization ---
 document.addEventListener('DOMContentLoaded', () => {
     predictButton.disabled = true; 
-    resetFormToCreateMode(); 
+    resetFormAndPrepareForNewPrediction(); // Initial state for the form
     loadPredictionsFromStorage(); 
     initializePyodideAndLoadModel(); 
 });

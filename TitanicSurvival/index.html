@@ -5,112 +5,110 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Titanic Survival Predictor</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="style.css"> <!-- Link to your CSS file -->
+    <link rel="stylesheet" href="style.css"> 
 </head>
-<body class="bg-gray-100">
+<body class="bg-gray-100"> <!-- Background image will be applied by JS -->
 
-    <div class="container mx-auto p-4 md:p-8 max-w-4xl">
+    <div class="container mx-auto p-4 md:p-8 max-w-2xl"> <!-- Max-width adjusted for single column -->
         
         <!-- Header -->
         <header class="text-center mb-8">
-            <h1 class="text-4xl font-bold text-blue-700">🚢 Titanic Survival Predictor Pro 🚢</h1>
+            <h1 class="text-4xl font-bold text-blue-700">🚢 Titanic Survival Predictor 🚢</h1>
             <p id="statusMessage" class="text-gray-600 mt-2">Loading Pyodide & Model... Please Wait.</p>
         </header>
 
-        <!-- Main Content Grid -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
-            <!-- Prediction Form (Left/Main Column) -->
-            <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-lg">
-                <h2 id="formTitle" class="text-2xl font-semibold text-gray-800 mb-6">Make New Prediction</h2>
+        <!-- Prediction Section -->
+        <div class="bg-white p-6 rounded-xl shadow-lg mb-8">
+            <h2 id="formTitle" class="text-2xl font-semibold text-gray-800 mb-6 text-center">Make New Prediction</h2>
+            
+            <div id="predictionArea"> <!-- Wrapper for form and its result for easier management -->
                 <form id="predictionForm">
-                    <input type="hidden" id="predictionId" value=""> <!-- For updates -->
+                    <input type="hidden" id="predictionId" value=""> 
 
-                    <div class="mb-4"> 
-                        <label for="name" class="block text-sm font-medium text-gray-700">Passenger Name:</label>
-                        <input type="text" id="name" placeholder="e.g., John Doe" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-                    </div>
+                    <div id="formInputsWrapper"> <!-- This div will be hidden/shown -->
+                        <div class="mb-4"> 
+                            <label for="name" class="block text-sm font-medium text-gray-700">Passenger Name:</label>
+                            <input type="text" id="name" placeholder="e.g., John Doe" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                        </div>
 
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-                        <div>
-                            <label for="pclass" class="block text-sm font-medium text-gray-700">Passenger Class:</label>
-                            <select id="pclass" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-                                <option value="1">1st Class</option>
-                                <option value="2">2nd Class</option>
-                                <option value="3" selected>3rd Class</option>
-                            </select>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label for="pclass" class="block text-sm font-medium text-gray-700">Passenger Class:</label>
+                                <select id="pclass" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                                    <option value="1">1st Class</option>
+                                    <option value="2">2nd Class</option>
+                                    <option value="3" selected>3rd Class</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="sex_male" class="block text-sm font-medium text-gray-700">Sex:</label>
+                                <select id="sex_male" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                                    <option value="0">Female</option>
+                                    <option value="1" selected>Male</option>
+                                </select>
+                            </div>
                         </div>
-                        <div>
-                            <label for="sex_male" class="block text-sm font-medium text-gray-700">Sex:</label>
-                            <select id="sex_male" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-                                <option value="0">Female</option>
-                                <option value="1" selected>Male</option>
-                            </select>
-                        </div>
-                    </div>
 
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-                        <div>
-                            <label for="age" class="block text-sm font-medium text-gray-700">Age:</label>
-                            <input type="number" id="age" value="30" step="0.1" placeholder="e.g., 30" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label for="age" class="block text-sm font-medium text-gray-700">Age:</label>
+                                <input type="number" id="age" value="30" step="0.1" placeholder="e.g., 30" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                            </div>
+                            <div>
+                                <label for="sibsp" class="block text-sm font-medium text-gray-700">Siblings/Spouses:</label>
+                                <input type="number" id="sibsp" value="0" step="1" placeholder="e.g., 1" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                            </div>
                         </div>
-                        <div>
-                            <label for="sibsp" class="block text-sm font-medium text-gray-700">Siblings/Spouses:</label>
-                            <input type="number" id="sibsp" value="0" step="1" placeholder="e.g., 1" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-                        </div>
-                    </div>
 
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-                        <div>
-                            <label for="parch" class="block text-sm font-medium text-gray-700">Parents/Children:</label>
-                            <input type="number" id="parch" value="0" step="1" placeholder="e.g., 0" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                            <div>
+                                <label for="parch" class="block text-sm font-medium text-gray-700">Parents/Children:</label>
+                                <input type="number" id="parch" value="0" step="1" placeholder="e.g., 0" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                            </div>
+                            <div>
+                                <label for="fare" class="block text-sm font-medium text-gray-700">Fare Paid:</label>
+                                <input type="number" id="fare" value="15.0" step="0.01" placeholder="e.g., 30.0" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                            </div>
                         </div>
-                        <div>
-                            <label for="fare" class="block text-sm font-medium text-gray-700">Fare Paid:</label>
-                            <input type="number" id="fare" value="15.0" step="0.01" placeholder="e.g., 30.0" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-                        </div>
-                    </div>
-
-                    <button type="submit" id="predictButton" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-md shadow-md transition duration-150 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed">
-                        Predict Survival
-                    </button>
-                    <button type="button" id="cancelUpdateButton" class="w-full mt-2 bg-gray-500 hover:bg-gray-600 text-white font-semibold py-3 px-4 rounded-md shadow-md transition duration-150 ease-in-out" style="display:none;">
-                        Cancel Update
-                    </button>
+                         <button type="submit" id="predictButton" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-md shadow-md transition duration-150 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed">
+                            Predict Survival
+                        </button>
+                        <button type="button" id="cancelUpdateButton" class="w-full mt-2 bg-gray-500 hover:bg-gray-600 text-white font-semibold py-3 px-4 rounded-md shadow-md transition duration-150 ease-in-out" style="display:none;">
+                            Cancel Update
+                        </button>
+                    </div> <!-- End formInputsWrapper -->
                 </form>
 
+                <button type="button" id="makeAnotherPredictionButton" class="w-full mt-4 bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-4 rounded-md shadow-md" style="display:none;">
+                    Make Another Prediction
+                </button>
                 <div id="predictionResult" class="mt-6 p-4 rounded-md text-center font-semibold text-lg" style="display:none;">
                     <!-- Result will be shown here -->
                 </div>
-            </div>
+            </div> <!-- End predictionArea wrapper -->
+        </div>
 
-            <!-- Right Column: Saved Predictions & Vertical Gauge -->
-            <div class="lg:col-span-1 bg-white p-6 rounded-xl shadow-lg flex flex-col md:flex-row lg:flex-col gap-6">
-                <!-- Saved Predictions List -->
-                <div class="flex-1 min-w-0"> <!-- min-w-0 helps flex item shrink correctly -->
-                    <h2 class="text-2xl font-semibold text-gray-800 mb-4 text-center">Saved Predictions</h2>
-                    <div id="savedPredictionsList" class="space-y-4 max-h-[50vh] overflow-y-auto pr-2">
-                        <p id="noSavedPredictions" class="text-gray-500 text-center">No predictions saved yet.</p>
-                    </div>
+        <!-- Data Display Section (Saved Predictions & Gauge) -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="md:col-span-2 bg-white p-6 rounded-xl shadow-lg"> <!-- Saved Predictions -->
+                <h2 class="text-2xl font-semibold text-gray-800 mb-4 text-center">Saved Predictions</h2>
+                <div id="savedPredictionsList" class="space-y-4 max-h-[50vh] overflow-y-auto pr-2">
+                    <p id="noSavedPredictions" class="text-gray-500 text-center">No predictions saved yet.</p>
                 </div>
-
-                <!-- Vertical Gauge -->
-                <div class="md:w-28 lg:w-full flex-shrink-0 md:pl-4 md:border-l md:border-gray-200 lg:border-l-0 lg:pt-6 lg:border-t lg:border-gray-200 flex flex-col items-center">
+            </div>
+            <div class="md:col-span-1 bg-white p-6 rounded-xl shadow-lg flex flex-col items-center"> <!-- Vertical Gauge -->
                     <h3 class="text-xl font-semibold text-gray-700 mb-3 text-center">Survival Rate</h3>
                     <div id="survivalGaugeText" class="text-3xl font-bold text-center text-blue-600 mb-2">N/A</div>
-                    <!-- Vertical Bar Container -->
                     <div class="w-10 h-52 bg-gray-200 rounded-full overflow-hidden relative flex flex-col-reverse"> 
-                        <!-- flex-col-reverse makes the fill start from bottom for height % -->
                         <div id="survivalGaugeBar" class="w-full bg-green-500 transition-all duration-500 ease-in-out" style="height: 0%;"></div>
                     </div>
                     <p id="gaugeDetailText" class="text-sm text-gray-500 text-center mt-2">(Based on 0 predictions)</p>
-                </div>
             </div>
+        </div> <!-- End Data Display Grid -->
 
-        </div> <!-- End Main Content Grid -->
     </div> <!-- End Container -->
 
     <script src="https://cdn.jsdelivr.net/pyodide/v0.25.1/full/pyodide.js"></script>
-    <script src="script.js"></script> <!-- Link to your JavaScript file -->
+    <script src="script.js"></script> 
 </body>
 </html>
