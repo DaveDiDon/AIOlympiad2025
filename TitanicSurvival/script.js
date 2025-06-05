@@ -219,7 +219,7 @@ function renderSavedPredictions() {
 
         card.innerHTML = `
             <h4 class="font-semibold text-blue-700">${pred.name || 'Unnamed Prediction'}</h4>
-            <p class="text-xs text-gray-500 mb-1">ID: ...${pred.id.slice(-6)}</p>
+            <p class="text-xs text-gray-500 mb-1"></p>
             <p class="text-gray-600">
                 Class: ${pred.features.pclass}, Sex: ${sexText}, Age: ${pred.features.age}
             </p>
