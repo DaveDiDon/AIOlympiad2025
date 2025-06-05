@@ -1,0 +1,121 @@
+/* style.css */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    margin: 0;
+    padding: 0;
+    color: #333;
+    transition: background-image 0.5s ease-in-out; /* Smooth background transition */
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-attachment: fixed; /* Keeps background fixed during scroll */
+    min-height: 100vh; /* Ensure body takes full viewport height */
+    display: flex;
+    align-items: center; /* Vertically center the container */
+    justify-content: center; /* Horizontally center the container */
+}
+
+.container {
+    background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent white */
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    width: 100%;
+    max-width: 450px; /* Control maximum width */
+    text-align: left; /* Align text to left within container */
+}
+
+h1 {
+    text-align: center;
+    color: #004085; /* Darker blue */
+    margin-bottom: 25px;
+    font-size: 1.8em;
+}
+
+label {
+    display: block;
+    margin-top: 15px;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #495057;
+    font-size: 0.95em;
+}
+
+input[type="number"],
+select {
+    width: 100%; /* Full width relative to padding */
+    padding: 12px;
+    margin-bottom: 18px;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    box-sizing: border-box; /* Include padding and border in element's total width and height */
+    font-size: 1em;
+}
+
+input[type="number"]:focus,
+select:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    outline: none;
+}
+
+button {
+    background-color: #007bff;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1.1em;
+    width: 100%;
+    transition: background-color 0.2s ease-in-out;
+    margin-top: 10px; /* Add some space above the button */
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+#status {
+    margin-top: 25px;
+    padding: 12px;
+    border-radius: 6px;
+    background-color: #e9ecef;
+    color: #495057;
+    text-align: center;
+    font-size: 0.9em;
+}
+
+#result {
+    margin-top: 25px;
+    padding: 15px;
+    border-radius: 6px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.2em;
+    display: none; /* Initially hidden */
+}
+
+#result.survived {
+    background-color: #d4edda; /* Light green */
+    color: #155724;      /* Dark green */
+    border: 1px solid #c3e6cb;
+}
+
+#result.not-survived {
+    background-color: #f8d7da; /* Light red */
+    color: #721c24;      /* Dark red */
+    border: 1px solid #f5c6cb;
+}
+
+#result.error {
+    background-color: #f8d7da; /* Light red for errors too */
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+    font-size: 1em; /* Slightly smaller for error messages */
+}
