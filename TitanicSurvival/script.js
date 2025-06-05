@@ -4,7 +4,7 @@ const resultDiv = document.getElementById('result');
 const predictButton = document.getElementById('predictButton');
 
 // --- CONFIGURATION ---
-const MODEL_URL = "https://github.com/DaveDiDon/AIOlympiad2025/blob/main/TitanicSurvival/ml_models/titanic_model.joblib";
+const MODEL_URL = "https://raw.githubusercontent.com/DaveDiDon/AIOlympiad2025/blob/main/TitanicSurvival/ml_models/titanic_model.joblib";
 const FEATURE_ORDER = ['pclass', 'sex_male', 'age', 'sibsp', 'parch', 'fare']; 
 
 let pyodide = null;
