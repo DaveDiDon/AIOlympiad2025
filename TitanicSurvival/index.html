@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Titanic Survival Predictor Pro</title>
+    <title>Titanic Survival Predictor</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="style.css"> <!-- Link to your CSS file -->
 </head>
@@ -18,15 +18,15 @@
         </header>
 
         <!-- Main Content Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-            <!-- Prediction Form & Gauge (Left/Main Column) -->
-            <div class="md:col-span-2 bg-white p-6 rounded-xl shadow-lg">
+            <!-- Prediction Form (Left/Main Column) -->
+            <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-lg">
                 <h2 id="formTitle" class="text-2xl font-semibold text-gray-800 mb-6">Make New Prediction</h2>
                 <form id="predictionForm">
                     <input type="hidden" id="predictionId" value=""> <!-- For updates -->
 
-                    <div class="mb-4"> <!-- Name field full width -->
+                    <div class="mb-4"> 
                         <label for="name" class="block text-sm font-medium text-gray-700">Passenger Name:</label>
                         <input type="text" id="name" placeholder="e.g., John Doe" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
                     </div>
@@ -82,29 +82,32 @@
                 <div id="predictionResult" class="mt-6 p-4 rounded-md text-center font-semibold text-lg" style="display:none;">
                     <!-- Result will be shown here -->
                 </div>
-
-                <!-- Survival Rate Gauge -->
-                <div class="mt-8 pt-6 border-t border-gray-200">
-                    <h3 class="text-xl font-semibold text-gray-700 mb-3 text-center">Overall Survival Rate (Saved Predictions)</h3>
-                    <div id="survivalGaugeText" class="text-3xl font-bold text-center text-blue-600 mb-2">N/A</div>
-                    <div class="w-full h-6 bg-gray-200 rounded-full overflow-hidden gauge-bar-background">
-                        <div id="survivalGaugeBar" class="h-full bg-green-500 gauge-bar-fill" style="width: 0%;"></div>
-                    </div>
-                    <p id="gaugeDetailText" class="text-sm text-gray-500 text-center mt-1">(Based on 0 predictions)</p>
-                </div>
             </div>
 
-            <!-- Saved Predictions List (Right/Side Column) -->
-            <div class="md:col-span-1 bg-white p-6 rounded-xl shadow-lg">
-                <h2 class="text-2xl font-semibold text-gray-800 mb-6 text-center">Saved Predictions</h2>
-                <div id="savedPredictionsList" class="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
-                    <!-- Predictions will be listed here -->
-                    <p id="noSavedPredictions" class="text-gray-500 text-center">No predictions saved yet.</p>
+            <!-- Right Column: Saved Predictions & Vertical Gauge -->
+            <div class="lg:col-span-1 bg-white p-6 rounded-xl shadow-lg flex flex-col md:flex-row lg:flex-col gap-6">
+                <!-- Saved Predictions List -->
+                <div class="flex-1 min-w-0"> <!-- min-w-0 helps flex item shrink correctly -->
+                    <h2 class="text-2xl font-semibold text-gray-800 mb-4 text-center">Saved Predictions</h2>
+                    <div id="savedPredictionsList" class="space-y-4 max-h-[50vh] overflow-y-auto pr-2">
+                        <p id="noSavedPredictions" class="text-gray-500 text-center">No predictions saved yet.</p>
+                    </div>
+                </div>
+
+                <!-- Vertical Gauge -->
+                <div class="md:w-28 lg:w-full flex-shrink-0 md:pl-4 md:border-l md:border-gray-200 lg:border-l-0 lg:pt-6 lg:border-t lg:border-gray-200 flex flex-col items-center">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-3 text-center">Survival Rate</h3>
+                    <div id="survivalGaugeText" class="text-3xl font-bold text-center text-blue-600 mb-2">N/A</div>
+                    <!-- Vertical Bar Container -->
+                    <div class="w-10 h-52 bg-gray-200 rounded-full overflow-hidden relative flex flex-col-reverse"> 
+                        <!-- flex-col-reverse makes the fill start from bottom for height % -->
+                        <div id="survivalGaugeBar" class="w-full bg-green-500 transition-all duration-500 ease-in-out" style="height: 0%;"></div>
+                    </div>
+                    <p id="gaugeDetailText" class="text-sm text-gray-500 text-center mt-2">(Based on 0 predictions)</p>
                 </div>
             </div>
 
         </div> <!-- End Main Content Grid -->
-
     </div> <!-- End Container -->
 
     <script src="https://cdn.jsdelivr.net/pyodide/v0.25.1/full/pyodide.js"></script>

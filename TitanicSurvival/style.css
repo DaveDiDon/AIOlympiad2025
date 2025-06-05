@@ -1,10 +1,4 @@
 /* style.css */
-/* Tailwind directives (usually handled by build process, but CDN is used in HTML) */
-/* @tailwind base; */
-/* @tailwind components; */
-/* @tailwind utilities; */
-
-/* Custom styles if needed, though Tailwind should cover most */
 body {
     transition: background-image 0.5s ease-in-out;
     background-size: cover;
@@ -14,12 +8,12 @@ body {
     /* Default background will be set by JS if assets folder is present */
 }
 
-/* Simple custom scrollbar for better looks with dark themes if body bg is dark */
+/* Simple custom scrollbar */
 ::-webkit-scrollbar {
     width: 8px;
 }
 ::-webkit-scrollbar-track {
-    background: #f1f1f110; /* Slightly transparent track */
+    background: #f1f1f110; /* Slightly transparent track for dark backgrounds */
 }
 ::-webkit-scrollbar-thumb {
     background: #888;
@@ -29,16 +23,7 @@ body {
     background: #555;
 }
 
-/* Style for the pseudo-gauge bar */
-.gauge-bar-background {
-    background-color: #e9ecef; /* Light grey for the track */
-}
-.gauge-bar-fill {
-    transition: width 0.5s ease-in-out; /* Animate the fill */
-}
-
-/* Additional global styles or component overrides can go here */
-/* For example, if you want a consistent font from Tailwind not applied by default to all elements */
+/* Ensure consistent font from Tailwind if not applied by default to all elements */
 html {
     font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }

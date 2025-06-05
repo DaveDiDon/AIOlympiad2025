@@ -1,3 +1,5 @@
+// script.js
+
 // --- Constants and DOM Elements ---
 const statusMessage = document.getElementById('statusMessage');
 const predictionForm = document.getElementById('predictionForm');
@@ -5,7 +7,7 @@ const formTitle = document.getElementById('formTitle');
 const predictButton = document.getElementById('predictButton');
 const cancelUpdateButton = document.getElementById('cancelUpdateButton');
 const predictionResultDiv = document.getElementById('predictionResult');
-const predictionIdInput = document.getElementById('predictionId'); // Hidden input for update
+const predictionIdInput = document.getElementById('predictionId'); 
 
 const savedPredictionsListDiv = document.getElementById('savedPredictionsList');
 const noSavedPredictionsP = document.getElementById('noSavedPredictions');
@@ -15,7 +17,7 @@ const survivalGaugeBar = document.getElementById('survivalGaugeBar');
 const gaugeDetailText = document.getElementById('gaugeDetailText');
 
 // --- Configuration ---
-const MODEL_URL = "https://raw.githubusercontent.com/DaveDiDon/AIOlympiad2025/main/TitanicSurvival/ml_models/titanic_model.joblib"; // User updated this
+const MODEL_URL = "https://raw.githubusercontent.com/DaveDiDon/AIOlympiad2025/main/TitanicSurvival/ml_models/titanic_model.joblib"; 
 const FEATURE_ORDER = ['pclass', 'age', 'sibsp', 'parch', 'fare', 'sex_male']; 
 const STORAGE_KEY = 'titanicUserPredictions';
 
@@ -25,23 +27,19 @@ const notSurvivedBg = 'assets/titanic-failed.gif';
 
 let pyodide = null;
 let titanicModel = null;
-let userPredictions = []; // Array to hold saved predictions
+let userPredictions = []; 
 
 // --- Utility Functions ---
 function setBackground(imageName) {
-    // Check if the assets folder and image exist by trying to load it in a hidden element
-    // This is a simple check; more robust would involve preloading or error events on image load
     const imgTest = new Image();
     imgTest.onload = () => {
         document.body.style.backgroundImage = `url('${imageName}')`;
     };
     imgTest.onerror = () => {
-        console.warn(`Background image ${imageName} not found in assets. Body background will not be set.`);
-        // Optionally set a fallback solid color or no background
+        console.warn(`Background image ${imageName} not found. Check path 'assets/${imageName}'. Body background will not be set.`);
         document.body.style.backgroundImage = 'none'; 
-        // document.body.style.backgroundColor = '#f0f0f0'; // Example fallback color
     };
-    imgTest.src = imageName; // Start loading to trigger onload or onerror
+    imgTest.src = imageName; 
 }
 
 
@@ -54,14 +52,14 @@ function showPredictionResult(message, outcomeType = "info") {
     predictionResultDiv.textContent = message;
     predictionResultDiv.style.display = 'block';
     
-    predictionResultDiv.className = 'mt-6 p-4 rounded-md text-center font-semibold text-lg '; // Base classes
+    predictionResultDiv.className = 'mt-6 p-4 rounded-md text-center font-semibold text-lg '; 
     if (outcomeType === "survived") {
         predictionResultDiv.classList.add('bg-green-100', 'text-green-700');
     } else if (outcomeType === "not-survived") {
         predictionResultDiv.classList.add('bg-red-100', 'text-red-700');
     } else if (outcomeType === "error") {
         predictionResultDiv.classList.add('bg-red-100', 'text-red-700');
-    } else { // info
+    } else { 
             predictionResultDiv.classList.add('bg-blue-100', 'text-blue-700');
     }
 }
@@ -86,7 +84,7 @@ function savePredictionsToStorage() {
 
 // --- Pyodide and Model Initialization ---
 async function initializePyodideAndLoadModel() {
-    setBackground(defaultBg); // Set initial background
+    setBackground(defaultBg); 
     updateStatus("Initializing Pyodide runtime...");
     predictButton.disabled = true;
     try {
@@ -136,13 +134,13 @@ async function makePrediction(inputDataValues) {
     
     pyodide.globals.set("current_input_data_js", pyodide.toPy(inputDataValues));
     pyodide.globals.set("model", titanicModel);
-    pyodide.globals.set("expected_feature_order_py", pyodide.toPy(FEATURE_ORDER)); // Pass FEATURE_ORDER to Python
+    pyodide.globals.set("expected_feature_order_py", pyodide.toPy(FEATURE_ORDER));
 
     const pythonCodePredict = `
 import pandas as pd
 input_dict = current_input_data_js 
 input_df_initial = pd.DataFrame([input_dict])
-df_feature_order = expected_feature_order_py # This is now a Python list
+df_feature_order = expected_feature_order_py 
 try:
     input_df = input_df_initial[df_feature_order]
 except KeyError as e:
@@ -179,7 +177,7 @@ prediction_proba_array = model.predict_proba(input_df)
 function updateSurvivalGauge() {
     if (userPredictions.length === 0) {
         survivalGaugeText.textContent = "N/A";
-        survivalGaugeBar.style.width = "0%";
+        survivalGaugeBar.style.height = "0%"; 
         survivalGaugeBar.classList.remove('bg-green-500', 'bg-red-500', 'bg-yellow-500');
         survivalGaugeBar.classList.add('bg-gray-300');
         gaugeDetailText.textContent = "(Based on 0 predictions)";
@@ -190,7 +188,7 @@ function updateSurvivalGauge() {
     const survivalRate = (survivedCount / userPredictions.length) * 100;
 
     survivalGaugeText.textContent = `${survivalRate.toFixed(1)}%`;
-    survivalGaugeBar.style.width = `${survivalRate}%`;
+    survivalGaugeBar.style.height = `${survivalRate}%`; 
     gaugeDetailText.textContent = `(${survivedCount} Survived / ${userPredictions.length} Total)`;
 
     survivalGaugeBar.classList.remove('bg-gray-300', 'bg-red-500', 'bg-yellow-500', 'bg-green-500');
@@ -213,22 +211,25 @@ function renderSavedPredictions() {
 
     userPredictions.forEach(pred => {
         const card = document.createElement('div');
-        card.className = 'p-4 border border-gray-200 rounded-lg shadow-sm bg-gray-50';
+        card.className = 'p-3 border border-gray-200 rounded-lg shadow-sm bg-gray-50 text-sm'; 
         
         let sexText = pred.features.sex_male === 1 ? "Male" : "Female";
-        let outcomeClass = pred.predictionOutcome === "Survived" ? "text-green-600" : "text-red-600";
+        let outcomeClass = pred.predictionOutcome === "Survived" ? "text-green-700" : "text-red-700";
 
         card.innerHTML = `
-            <h4 class="font-semibold text-md text-blue-700">${pred.name || 'Unnamed Prediction'} (ID: ...${pred.id.slice(-6)})</h4>
-            <p class="text-sm text-gray-600">
-                Class: ${pred.features.pclass}, Sex: ${sexText}, Age: ${pred.features.age}, 
+            <h4 class="font-semibold text-blue-700">${pred.name || 'Unnamed Prediction'}</h4>
+            <p class="text-xs text-gray-500 mb-1">ID: ...${pred.id.slice(-6)}</p>
+            <p class="text-gray-600">
+                Class: ${pred.features.pclass}, Sex: ${sexText}, Age: ${pred.features.age}
+            </p>
+            <p class="text-gray-600">
                 SibSp: ${pred.features.sibsp}, Parch: ${pred.features.parch}, Fare: ${pred.features.fare.toFixed(2)}
             </p>
             <p class="font-semibold mt-1 ${outcomeClass}">Outcome: ${pred.predictionOutcome}</p>
             <p class="text-xs text-gray-500">Confidence: ${(pred.confidence * 100).toFixed(1)}%</p>
-            <div class="mt-3 space-x-2 text-right">
-                <button data-id="${pred.id}" class="update-btn text-xs bg-yellow-500 hover:bg-yellow-600 text-white py-1 px-3 rounded-md">Update</button>
-                <button data-id="${pred.id}" class="delete-btn text-xs bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded-md">Delete</button>
+            <div class="mt-2 space-x-1 text-right">
+                <button data-id="${pred.id}" class="update-btn text-xs bg-yellow-400 hover:bg-yellow-500 text-black py-1 px-2 rounded-md">Edit</button>
+                <button data-id="${pred.id}" class="delete-btn text-xs bg-red-500 hover:bg-red-600 text-white py-1 px-2 rounded-md">Del</button>
             </div>
         `;
         savedPredictionsListDiv.appendChild(card);
@@ -239,7 +240,7 @@ function populateFormForUpdate(predictionId) {
     const pred = userPredictions.find(p => p.id === predictionId);
     if (!pred) return;
 
-    document.getElementById('name').value = pred.name || ''; // Populate name
+    document.getElementById('name').value = pred.name || '';
     document.getElementById('pclass').value = pred.features.pclass;
     document.getElementById('sex_male').value = pred.features.sex_male;
     document.getElementById('age').value = pred.features.age;
@@ -248,16 +249,16 @@ function populateFormForUpdate(predictionId) {
     document.getElementById('fare').value = pred.features.fare;
     
     predictionIdInput.value = pred.id; 
-    formTitle.textContent = "Update Prediction";
+    formTitle.textContent = "Update Prediction"; // Title for update mode
     predictButton.textContent = "Save Updated Prediction";
     cancelUpdateButton.style.display = 'inline-block';
     setBackground(defaultBg); 
     predictionResultDiv.style.display = 'none';
 }
 
-function resetFormToCreateMode() {
+function resetFormToCreateMode(lastPredictionOutcome = null, passengerName = null) {
     predictionForm.reset(); 
-    document.getElementById('name').value = ""; // Clear name field specifically
+    document.getElementById('name').value = ""; 
     document.getElementById('pclass').value = "3"; 
     document.getElementById('sex_male').value = "1";
     document.getElementById('age').value = "30";
@@ -266,11 +267,28 @@ function resetFormToCreateMode() {
     document.getElementById('fare').value = "15.0";
 
     predictionIdInput.value = ""; 
-    formTitle.textContent = "Make New Prediction";
+
+    if (lastPredictionOutcome && passengerName) {
+        if (lastPredictionOutcome === "Survived") {
+            formTitle.textContent = `Congratulations, ${passengerName}!`;
+        } else if (lastPredictionOutcome === "Not Survived") {
+            formTitle.textContent = `Unfortunately, ${passengerName}...`;
+        } else {
+            formTitle.textContent = "Make New Prediction";
+        }
+    } else {
+        formTitle.textContent = "Make New Prediction";
+    }
+    
     predictButton.textContent = "Predict Survival";
     cancelUpdateButton.style.display = 'none';
-    predictionResultDiv.style.display = 'none';
-    setBackground(defaultBg);
+    // Do not hide predictionResultDiv here, it shows the last prediction.
+    // If you want to clear it immediately on reset, uncomment the next line:
+    // predictionResultDiv.style.display = 'none'; 
+    // Background is usually set based on prediction or reset if form is fully cleared for new entry.
+    // If coming from a successful prediction, the background reflects that.
+    // If "Cancel Update" is clicked, then reset background:
+    // setBackground(defaultBg); // This line is now in cancelUpdateButton's handler
 }
 
 // --- Event Handlers ---
@@ -280,7 +298,7 @@ predictionForm.addEventListener('submit', async function(event) {
     const currentPredictionId = predictionIdInput.value;
     const passengerName = document.getElementById('name').value.trim(); 
 
-    if (!passengerName && !currentPredictionId) { // Require name for new predictions
+    if (!passengerName && !currentPredictionId) { 
             showPredictionResult("Passenger Name is required for new predictions.", "error");
             predictButton.disabled = false;
             return;
@@ -306,11 +324,14 @@ predictionForm.addEventListener('submit', async function(event) {
     updateStatus(`Processing ${currentPredictionId ? 'updated' : 'new'} prediction...`);
     const predictionData = await makePrediction(features);
 
+    let finalOutcomeTextForTitle = null;
+
     if (predictionData) {
         const outcomeText = predictionData.prediction === 1 ? "Survived" : "Not Survived";
+        finalOutcomeTextForTitle = outcomeText; // Store for title update
         const confidence = predictionData.prediction === 1 ? predictionData.probability_survived : predictionData.probability_not_survived;
         
-        showPredictionResult(`Prediction for ${passengerName || 'passenger'}: ${outcomeText} (Confidence: ${(confidence * 100).toFixed(1)}%)`, outcomeText.toLowerCase().replace(' ', '-'));
+        showPredictionResult(`Prediction for ${passengerName || 'Selected Passenger'}: ${outcomeText} (Confidence: ${(confidence * 100).toFixed(1)}%)`, outcomeText.toLowerCase().replace(' ', '-'));
         setBackground(outcomeText === "Survived" ? survivedBg : notSurvivedBg);
         
         const predictionRecord = {
@@ -331,15 +352,18 @@ predictionForm.addEventListener('submit', async function(event) {
             updateStatus("New prediction saved!");
         }
         savePredictionsToStorage();
-        resetFormToCreateMode(); 
+        resetFormToCreateMode(finalOutcomeTextForTitle, passengerName || "Passenger"); 
     } else {
             updateStatus("Prediction failed. See message above.", true);
+            resetFormToCreateMode(); // Reset form even on failure, but keep default title
     }
     predictButton.disabled = false;
 });
 
 cancelUpdateButton.addEventListener('click', () => {
-    resetFormToCreateMode();
+    resetFormToCreateMode(); // This will set title to "Make New Prediction"
+    setBackground(defaultBg); // Explicitly reset background
+    predictionResultDiv.style.display = 'none'; // Hide any previous result
 });
 
 savedPredictionsListDiv.addEventListener('click', function(event) {
@@ -353,6 +377,7 @@ savedPredictionsListDiv.addEventListener('click', function(event) {
             savePredictionsToStorage();
             showPredictionResult("Prediction deleted.", "info");
             setBackground(defaultBg);
+            resetFormToCreateMode(); // Reset form title to default
         }
     } else if (target.classList.contains('update-btn') && predictionId) {
         populateFormForUpdate(predictionId);
