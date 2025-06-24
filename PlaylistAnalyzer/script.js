@@ -6,6 +6,21 @@ const LOCAL_STORAGE_KEY = 'userPlaylist';
 const DARK_MODE_KEY = 'darkModeEnabled'; // Key for dark mode preference
 let playlist = []; // This array will hold the current playlist data
 
+// Audio analysis variables
+let model = null;
+let modelLoaded = false;
+
+// MFCC parameters
+const N_MFCC = 40;
+const MAX_PAD_LEN = 174;
+const SAMPLE_RATE = 22050; // Standard sample rate for audio processing
+const N_FFT = 2048;
+const HOP_LENGTH = 512;
+const N_MELS = 128;
+
+// Mel filterbank matrix (pre-computed for efficiency)
+let melFilterbank = null;
+
 // Define the desired order of days for consistent plotting
 const daysOrder = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
@@ -23,6 +38,13 @@ const clearAllDataButton = document.getElementById('clearAllDataButton');
 const playlistTableBody = document.getElementById('playlistTableBody');
 const noSongsMessage = document.getElementById('noSongsMessage');
 const errorMessage = document.getElementById('errorMessage');
+
+// Audio analysis elements
+const audioFileInput = document.getElementById('audioFileInput');
+const analyzeAudioButton = document.getElementById('analyzeAudioButton');
+const audioAnalysisProgress = document.getElementById('audioAnalysisProgress');
+const audioAnalysisResult = document.getElementById('audioAnalysisResult');
+const audioAnalysisError = document.getElementById('audioAnalysisError');
 
 const topArtistResult = document.getElementById('topArtistResult');
 const energyLevelResult = document.getElementById('energyLevelResult');
@@ -661,6 +683,184 @@ function drawEnergyDistributionChart() {
 }
 
 
+// --- Audio Analysis Functions ---
+function createMelFilterbank() {
+    if (melFilterbank) return melFilterbank;
+    
+    // Create mel filterbank matrix
+    const fftFreqs = tf.linspace(0, SAMPLE_RATE / 2, Math.floor(N_FFT / 2) + 1);
+    const melFreqs = tf.linspace(
+        tf.scalar(2595 * Math.log10(1 + 700 / 700)),
+        tf.scalar(2595 * Math.log10(1 + SAMPLE_RATE / 2 / 700)),
+        N_MELS + 2
+    );
+    
+    const melFreqsHz = tf.sub(tf.pow(tf.scalar(10), tf.div(melFreqs, tf.scalar(2595))), tf.scalar(1)).mul(tf.scalar(700));
+    
+    // Create triangular filters
+    const weights = tf.zeros([N_MELS, fftFreqs.shape[0]]);
+    const melFreqsHzData = melFreqsHz.dataSync();
+    const fftFreqsData = fftFreqs.dataSync();
+    
+    for (let i = 0; i < N_MELS; i++) {
+        const left = melFreqsHzData[i];
+        const center = melFreqsHzData[i + 1];
+        const right = melFreqsHzData[i + 2];
+        
+        for (let j = 0; j < fftFreqsData.length; j++) {
+            const freq = fftFreqsData[j];
+            if (freq >= left && freq <= center) {
+                weights.bufferSync().set((freq - left) / (center - left), i, j);
+            } else if (freq > center && freq <= right) {
+                weights.bufferSync().set((right - freq) / (right - center), i, j);
+            }
+        }
+    }
+    
+    melFilterbank = weights;
+    return melFilterbank;
+}
+
+function extractMFCCs(audioBuffer) {
+    // Resample to target sample rate if needed
+    const originalSampleRate = audioBuffer.sampleRate;
+    let audioData = audioBuffer.getChannelData(0); // Get mono audio
+    
+    // Simple resampling (for production, use a proper resampling library)
+    if (originalSampleRate !== SAMPLE_RATE) {
+        const ratio = SAMPLE_RATE / originalSampleRate;
+        const newLength = Math.floor(audioData.length * ratio);
+        const resampled = new Float32Array(newLength);
+        for (let i = 0; i < newLength; i++) {
+            const srcIndex = Math.floor(i / ratio);
+            resampled[i] = audioData[srcIndex] || 0;
+        }
+        audioData = resampled;
+    }
+    
+    // Compute STFT
+    const stftFrames = [];
+    for (let i = 0; i <= audioData.length - N_FFT; i += HOP_LENGTH) {
+        const frame = audioData.slice(i, i + N_FFT);
+        // Apply window function (Hann window)
+        for (let j = 0; j < N_FFT; j++) {
+            frame[j] *= 0.5 * (1 - Math.cos(2 * Math.PI * j / (N_FFT - 1)));
+        }
+        stftFrames.push(frame);
+    }
+    
+    // Compute power spectrum for each frame
+    const melSpectrogram = [];
+    for (const frame of stftFrames) {
+        // Compute FFT (simplified - in production, use a proper FFT library)
+        const fft = new Float32Array(N_FFT);
+        for (let k = 0; k < N_FFT; k++) {
+            let real = 0, imag = 0;
+            for (let n = 0; n < N_FFT; n++) {
+                const angle = -2 * Math.PI * k * n / N_FFT;
+                real += frame[n] * Math.cos(angle);
+                imag += frame[n] * Math.sin(angle);
+            }
+            fft[k] = Math.sqrt(real * real + imag * imag);
+        }
+        
+        // Apply mel filterbank
+        const filterbank = createMelFilterbank();
+        const melFrame = tf.matMul(filterbank, tf.tensor1d(fft.slice(0, Math.floor(N_FFT / 2) + 1)));
+        melSpectrogram.push(melFrame.dataSync());
+    }
+    
+    // Convert to log scale
+    const logMelSpectrogram = melSpectrogram.map(frame => 
+        frame.map(val => Math.log(Math.max(val, 1e-10)))
+    );
+    
+    // Compute MFCCs using DCT
+    const mfccs = [];
+    for (const frame of logMelSpectrogram) {
+        const mfccFrame = new Float32Array(N_MFCC);
+        for (let i = 0; i < N_MFCC; i++) {
+            let sum = 0;
+            for (let j = 0; j < frame.length; j++) {
+                sum += frame[j] * Math.cos(Math.PI * i * (2 * j + 1) / (2 * frame.length));
+            }
+            mfccFrame[i] = sum;
+        }
+        mfccs.push(mfccFrame);
+    }
+    
+    return mfccs;
+}
+
+function padOrTruncateMFCCs(mfccs) {
+    const padded = new Array(MAX_PAD_LEN);
+    
+    for (let i = 0; i < MAX_PAD_LEN; i++) {
+        if (i < mfccs.length) {
+            padded[i] = mfccs[i];
+        } else {
+            // Pad with zeros
+            padded[i] = new Float32Array(N_MFCC);
+        }
+    }
+    
+    return padded;
+}
+
+async function loadTFJSModel() {
+    audioAnalysisProgress.textContent = 'Loading energy prediction model...';
+    try {
+        // Use the correct GitHub Pages URL for the model
+        model = await tf.loadLayersModel('https://raw.githubusercontent.com/DaveDiDon/AIOlympiad2025/main/ml_models/tfjs_model/model.json');
+        modelLoaded = true;
+        audioAnalysisProgress.textContent = 'Model loaded.';
+    } catch (err) {
+        audioAnalysisError.textContent = 'Error loading model: ' + err;
+        audioAnalysisProgress.textContent = '';
+    }
+}
+
+async function analyzeAudioFile(file) {
+    audioAnalysisError.textContent = '';
+    audioAnalysisResult.textContent = '';
+    audioAnalysisProgress.textContent = 'Preparing audio file...';
+    try {
+        // Read file as ArrayBuffer
+        const arrayBuffer = await file.arrayBuffer();
+        // Decode audio using Web Audio API
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+        
+        audioAnalysisProgress.textContent = 'Extracting MFCC features...';
+        // Extract MFCCs
+        const mfccs = extractMFCCs(audioBuffer);
+        
+        audioAnalysisProgress.textContent = 'Preparing model input...';
+        // Pad or truncate to MAX_PAD_LEN
+        const paddedMFCCs = padOrTruncateMFCCs(mfccs);
+        
+        // Convert to tensor and reshape to (1, 40, 174, 1)
+        const mfccTensor = tf.tensor4d(paddedMFCCs, [1, N_MFCC, MAX_PAD_LEN, 1]);
+        
+        audioAnalysisProgress.textContent = 'Running prediction...';
+        // Predict energy
+        const prediction = await model.predict(mfccTensor).data();
+        
+        // Display result and populate energy input
+        audioAnalysisProgress.textContent = '';
+        const energyValue = prediction[0].toFixed(3);
+        audioAnalysisResult.textContent = `Predicted Energy Level: ${energyValue}`;
+        energyInput.value = energyValue;
+        
+        // Clean up
+        mfccTensor.dispose();
+        audioContext.close();
+    } catch (err) {
+        audioAnalysisError.textContent = 'Error running analysis: ' + err;
+        audioAnalysisProgress.textContent = '';
+    }
+}
+
 // --- Initial Load and Event Listeners ---
 document.addEventListener('DOMContentLoaded', () => {
     loadDarkModePreference(); // Load dark mode preference
@@ -671,6 +871,19 @@ document.addEventListener('DOMContentLoaded', () => {
     clearAllDataButton.addEventListener('click', clearAllData);
     uploadCsvButton.addEventListener('click', handleCsvUpload);
     darkModeToggle.addEventListener('click', toggleDarkMode); // Dark mode toggle listener
+
+    // Audio analysis event listener
+    analyzeAudioButton.addEventListener('click', async () => {
+        if (!audioFileInput.files.length) {
+            audioAnalysisError.textContent = 'Please select an audio file.';
+            return;
+        }
+        if (!modelLoaded) {
+            await loadTFJSModel();
+            if (!modelLoaded) return;
+        }
+        await analyzeAudioFile(audioFileInput.files[0]);
+    });
 
     // Redraw charts on window resize for responsiveness
     window.addEventListener('resize', () => {

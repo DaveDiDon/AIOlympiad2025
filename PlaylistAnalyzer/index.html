@@ -6,6 +6,7 @@
     <title>My Playlist Insights</title>
     <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.18.0/dist/tf.min.js"></script>
 </head>
 <body class="page-body">
     <div class="container">
@@ -106,9 +107,17 @@
                 </select>
                 <button id="addSongButton" class="btn btn-primary">Add Song</button>
             </div>
-            <div style="margin-top: 1rem;">
-                <a href="energy-analyzer.html" class="btn btn-secondary">Analyze Audio File for Energy</a>
+            
+            <div class="input-group" style="margin-top: 1rem;">
+                <label for="audioFileInput" class="input-label">Or analyze audio file for energy:</label>
+                <input type="file" id="audioFileInput" accept="audio/*" class="input-field">
+                <button id="analyzeAudioButton" class="btn btn-secondary">Analyze Audio</button>
             </div>
+            
+            <div id="audioAnalysisProgress" class="upload-message"></div>
+            <div id="audioAnalysisResult" class="info-value" style="margin-top: 0.5rem;"></div>
+            <div id="audioAnalysisError" class="error-message"></div>
+            
             <p id="errorMessage" class="error-message"></p>
         </section>
 
