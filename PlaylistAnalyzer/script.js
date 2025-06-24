@@ -214,14 +214,41 @@ function clearAllData() {
 
 // --- CSV Upload Functions ---
 function parseCsv(csvString) {
-    const lines = csvString.trim().split('\n');
+    // Split into lines, trim whitespace
+    const lines = csvString.trim().split(/\r?\n/);
     if (lines.length === 0) return [];
 
-    const headers = lines[0].split(',').map(header => header.trim());
+    // Parse header using robust CSV splitting
+    const parseLine = (line) => {
+        const result = [];
+        let current = '';
+        let inQuotes = false;
+        for (let i = 0; i < line.length; i++) {
+            const char = line[i];
+            if (char === '"') {
+                if (inQuotes && line[i + 1] === '"') {
+                    current += '"';
+                    i++; // skip next quote
+                } else {
+                    inQuotes = !inQuotes;
+                }
+            } else if (char === ',' && !inQuotes) {
+                result.push(current);
+                current = '';
+            } else {
+                current += char;
+            }
+        }
+        result.push(current);
+        return result.map(s => s.trim());
+    };
+
+    const headers = parseLine(lines[0]);
     const data = [];
 
     for (let i = 1; i < lines.length; i++) {
-        const values = lines[i].split(',').map(value => value.trim());
+        if (!lines[i].trim()) continue; // skip empty lines
+        const values = parseLine(lines[i]);
         if (values.length !== headers.length) {
             console.warn(`Skipping malformed row: ${lines[i]}`);
             continue; // Skip rows that don't match header count
