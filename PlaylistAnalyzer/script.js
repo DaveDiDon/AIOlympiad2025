@@ -810,7 +810,7 @@ function padOrTruncateMFCCs(mfccs) {
 async function loadTFJSModel() {
     audioAnalysisProgress.textContent = 'Loading energy prediction model...';
     try {
-        // Use the correct GitHub Pages URL for the model
+        // Use the original trained model
         model = await tf.loadLayersModel('https://raw.githubusercontent.com/DaveDiDon/AIOlympiad2025/main/ml_models/tfjs_model/model.json');
         modelLoaded = true;
         audioAnalysisProgress.textContent = 'Model loaded.';
