@@ -147,8 +147,8 @@ function padOrTruncateMFCCs(mfccs) {
 async function loadTFJSModel() {
     progressMessage.textContent = 'Loading energy prediction model...';
     try {
-        // Adjust the path as needed for deployment
-        model = await tf.loadLayersModel('ml_models/tfjs_model/model.json');
+        // Use the correct GitHub Pages URL for the model
+        model = await tf.loadLayersModel('https://raw.githubusercontent.com/DaveDiDon/AIOlympiad2025/main/ml_models/tfjs_model/model.json');
         modelLoaded = true;
         progressMessage.textContent = 'Model loaded.';
     } catch (err) {
