@@ -1,4 +1,5 @@
 // D3.js CDN is loaded in index.html <head>
+// Playlist Analyzer Script - Updated
 
 // --- Global Variables and Data Storage ---
 const LOCAL_STORAGE_KEY = 'userPlaylist';

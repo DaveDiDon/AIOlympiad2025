@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Song Energy Level Analyzer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.18.0/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.25.1/full/pyodide.js"></script>
+</head>
+<body class="page-body">
+    <div class="container">
+        <nav class="nav-bar">
+            <a href="https://davedidon.github.io/AIOlympiad2025/PlaylistAnalyzer/index.html" class="nav-link">Playlist Insights</a>
+            <a href="https://davedidon.github.io/AIOlympiad2025/PlaylistAnalyzer/energy-analyzer.html" class="nav-link nav-link-active">Song Energy Analyzer</a>
+        </nav>
+        <header class="header">
+            <h1 class="main-title">Song Energy Level Analyzer</h1>
+            <p class="header-description">
+                Upload an audio file (MP3, WAV, etc.) and this tool will analyze its energy level using a neural network model—all in your browser!
+            </p>
+        </header>
+        <section class="section analyzer-section">
+            <h2 class="section-title">Analyze Song Energy</h2>
+            <div class="input-group">
+                <input type="file" id="audioFileInput" accept="audio/*" class="input-field">
+                <button id="analyzeButton" class="btn btn-primary">Analyze Energy</button>
+            </div>
+            <div id="progressMessage" class="upload-message"></div>
+            <div id="energyResult" class="info-value" style="margin-top:2rem;"></div>
+            <div id="errorMessage" class="error-message"></div>
+        </section>
+    </div>
+    <button id="darkModeToggle" class="dark-mode-toggle">
+        <svg class="sun-icon" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 4c-4.411 0-8 3.589-8 8s3.589 8 8 8 8-3.589 8-8-3.589-8-8-8zm0 14c-3.309 0-6-2.691-6-6s2.691-6 6-6 6 2.691 6 6-2.691 6-6 6zm-1-15v2h2V3h-2zm0 17v2h2v-2h-2zM3 11H1v2h2v-2zm20 0h-2v2h2v-2zM5.61 5.61l-1.41 1.41 1.41 1.41 1.41-1.41-1.41-1.41zm12.78 12.78l-1.41 1.41-1.41-1.41 1.41-1.41 1.41 1.41zM5.61 18.39l-1.41-1.41 1.41-1.41 1.41 1.41-1.41 1.41zm12.78-12.78l-1.41-1.41 1.41-1.41 1.41 1.41-1.41 1.41z"/>
+        </svg>
+        <svg class="moon-icon hidden" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+            <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+        </svg>
+    </button>
+    <script src="./energy-analyzer.js"></script>
+    <script src="./script.js"></script> <!-- For dark mode toggle and shared UI logic -->
+</body>
+</html> 

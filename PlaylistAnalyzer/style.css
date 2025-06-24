@@ -359,3 +359,32 @@ body:not(.dark) .moon-icon {
         grid-template-columns: 1fr;
     }
 }
+
+/* Navigation Bar Styles */
+.nav-bar {
+    display: flex;
+    gap: 2rem;
+    justify-content: flex-start;
+    align-items: center;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 2.5rem;
+}
+.nav-link {
+    font-size: 1.1rem;
+    color: var(--text-accent);
+    text-decoration: none;
+    font-weight: 500;
+    padding: 0.5rem 1.2rem;
+    border-radius: 0.75rem;
+    transition: background 0.2s, color 0.2s;
+}
+.nav-link:hover {
+    background: var(--btn-secondary-bg);
+    color: var(--btn-secondary-text);
+}
+.nav-link-active {
+    background: var(--btn-primary-bg);
+    color: #fff;
+    cursor: default;
+}
