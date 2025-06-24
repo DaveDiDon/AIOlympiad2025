@@ -766,8 +766,14 @@ function extractMFCCs(audioBuffer) {
         
         // Apply mel filterbank
         const filterbank = createMelFilterbank();
-        const melFrame = tf.matMul(filterbank, tf.tensor1d(fft.slice(0, Math.floor(N_FFT / 2) + 1)));
+        const fftSlice = fft.slice(0, Math.floor(N_FFT / 2) + 1);
+        const fftTensor = tf.tensor(fftSlice, [fftSlice.length, 1]); // Explicitly shape as column vector
+        const melFrame = tf.matMul(filterbank, fftTensor);
         melSpectrogram.push(melFrame.dataSync());
+
+        // Clean up intermediate tensors to prevent memory leaks
+        fftTensor.dispose();
+        melFrame.dispose();
     }
     
     // Convert to log scale
