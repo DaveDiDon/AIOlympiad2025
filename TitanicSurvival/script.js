@@ -20,7 +20,7 @@ const survivalGaugeBar = document.getElementById('survivalGaugeBar');
 const gaugeDetailText = document.getElementById('gaugeDetailText');
 
 // --- Configuration ---
-const MODEL_URL = "https://raw.githubusercontent.com/DaveDiDon/AIOlympiad2025/main/TitanicSurvival/ml_models/titanic_model.joblib"; 
+const MODEL_URL = "https://raw.githubusercontent.com/DaveDiDon/AIOlympiad2025/main/ml_models/titanic_model.joblib"; 
 const FEATURE_ORDER = ['pclass', 'age', 'sibsp', 'parch', 'fare', 'sex_male']; 
 const STORAGE_KEY = 'titanicUserPredictions';
 

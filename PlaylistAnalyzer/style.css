@@ -54,6 +54,10 @@
     /* Message Colors */
     --error-text: #dc2626; /* Red-600 */
     --upload-success-text: #16a34a; /* Green-600 */
+
+    /* New variables for grid layout */
+    --bar-histogram: var(--chart-bar-histogram);
+    --bar-histogram-hover: var(--chart-bar-histogram-hover);
 }
 
 /* Dark Mode Overrides - REVISED */
@@ -107,6 +111,10 @@ body.dark {
     --table-border: #2c4d6f;
     --table-row-odd-bg: #123456; /* Odd row background matches secondary */
     --table-row-even-bg: #0b2238; /* Even row background matches section background */
+
+    /* New variables for grid layout */
+    --bar-histogram: var(--chart-bar-histogram);
+    --bar-histogram-hover: var(--chart-bar-histogram-hover);
 }
 
 /* Apply CSS Variables */
@@ -337,4 +345,17 @@ body:not(.dark) .sun-icon {
 }
 body:not(.dark) .moon-icon {
     display: block;
+}
+
+/* Restore grid layout for key insights row */
+.info-box-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+}
+@media (max-width: 900px) {
+    .info-box-grid {
+        grid-template-columns: 1fr;
+    }
 }

@@ -520,7 +520,7 @@ function drawSongsPerDayChart() {
         d => d.day,
         d => d.count,
         'Number of Songs Played',
-        'bar-songs',
+        'bar-histogram',
         'songs'
     );
 }
@@ -545,7 +545,7 @@ function drawEnergyPerDayChart() {
         d => d.day,
         d => d.averageEnergy,
         'Average Energy Level (0-1)',
-        'bar-energy',
+        'bar-histogram',
         'energy'
     );
 }

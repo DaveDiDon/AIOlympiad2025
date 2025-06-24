@@ -4,70 +4,66 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Playlist Insights</title>
-    <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./style.css">
 </head>
-<body class="p-4">
+<body class="page-body">
     <div class="container">
-        <header class="text-center mb-10 pb-6 border-b border-gray-200">
-            <h1 class="text-4xl mb-4">My Enhanced Playlist Insights</h1>
-            <p class="text-lg max-w-2xl mx-auto">
+        <header class="header">
+            <h1 class="main-title">My Enhanced Playlist Insights</h1>
+            <p class="header-description">
                 Dive into your music listening habits! Add your favorite songs below, or upload a CSV file, and this tool will analyze your playlist to show you your top artists, average energy levels, and how your music taste varies throughout the week.
             </p>
         </header>
 
-        <section class="mb-10">
-            <h2 class="text-2xl mb-6 text-center">Key Insights</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div class="p-6 bg-green-50 rounded-xl shadow-md border border-green-200">
-                    <h3 class="text-xl font-semibold mb-3 text-green-700">Top Artist</h3>
-                    <p id="topArtistResult" class="text-lg">No data available.</p>
+        <section class="section key-insights-section">
+            <h2 class="section-title">Key Insights</h2>
+            <div class="info-box-grid">
+                <div class="info-box info-box-green">
+                    <h3 class="info-title info-title-green">Top Artist</h3>
+                    <p id="topArtistResult" class="info-value">No data available.</p>
                 </div>
-                <div class="p-6 bg-yellow-50 rounded-xl shadow-md border border-yellow-200">
-                    <h3 class="text-xl font-semibold mb-3 text-yellow-700">Overall Playlist Energy</h3>
-                    <p id="energyLevelResult" class="text-lg">No data available.</p>
+                <div class="info-box info-box-yellow">
+                    <h3 class="info-title info-title-yellow">Overall Playlist Energy</h3>
+                    <p id="energyLevelResult" class="info-value">No data available.</p>
                 </div>
-                <div class="p-6 bg-purple-50 rounded-xl shadow-md border border-purple-200">
-                    <h3 class="text-xl font-semibold mb-3 text-purple-700">Most Listened Day</h3>
-                    <p id="dailyMusicStatement" class="text-lg">No data available.</p>
+                <div class="info-box info-box-purple">
+                    <h3 class="info-title info-title-purple">Most Listened Day</h3>
+                    <p id="dailyMusicStatement" class="info-value">No data available.</p>
                 </div>
             </div>
         </section>
 
-        <section class="mb-10">
-            <h2 class="text-2xl mb-6 text-center">Visual Breakdown of Your Habits</h2>
+        <section class="section chart-section">
+            <h2 class="section-title">Visual Breakdown of Your Habits</h2>
 
             <div class="chart-container-wrapper">
-                <h3 class="text-xl font-semibold mb-4 text-center">Songs Played Per Day</h3>
-                <div id="songs-per-day-chart" class="flex justify-center">
-                    </div>
+                <h3 class="chart-title">Songs Played Per Day</h3>
+                <div id="songs-per-day-chart" class="chart-container"></div>
             </div>
 
             <div class="chart-container-wrapper">
-                <h3 class="text-xl font-semibold mb-4 text-center">Average Energy Level Per Day</h3>
-                <div id="energy-per-day-chart" class="flex justify-center">
-                    </div>
+                <h3 class="chart-title">Average Energy Level Per Day</h3>
+                <div id="energy-per-day-chart" class="chart-container"></div>
             </div>
 
             <div class="chart-container-wrapper">
-                <h3 class="text-xl font-semibold mb-4 text-center">Playlist Energy Distribution</h3>
-                <div id="energy-distribution-chart" class="flex justify-center">
-                    </div>
-                <p class="text-sm mt-4 text-center">
+                <h3 class="chart-title">Playlist Energy Distribution</h3>
+                <div id="energy-distribution-chart" class="chart-container"></div>
+                <p class="chart-description">
                     This chart shows how many songs in your playlist fall into different energy level ranges (e.g., 0.0-0.1, 0.1-0.2, etc.). It helps you understand the overall 'vibe' of your music collection.
                 </p>
             </div>
         </section>
 
-        <section class="data-section-wrapper mb-10">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl">Your Current Playlist</h2>
-                <button id="clearAllDataButton" class="btn-danger">Clear All Data</button>
+        <section class="section data-section-wrapper">
+            <div class="playlist-header">
+                <h2 class="section-title">Your Current Playlist</h2>
+                <button id="clearAllDataButton" class="btn btn-danger">Clear All Data</button>
             </div>
 
-            <div id="playlistTableContainer" class="overflow-x-auto">
-                <table class="min-w-full bg-white rounded-xl shadow-md">
+            <div id="playlistTableContainer" class="table-container">
+                <table class="playlist-table">
                     <thead>
                         <tr>
                             <th>Song</th>
@@ -77,29 +73,28 @@
                             <th>Actions</th>
                         </tr>
                     </thead>
-                    <tbody id="playlistTableBody">
-                        </tbody>
+                    <tbody id="playlistTableBody"></tbody>
                 </table>
             </div>
-            <p id="noSongsMessage" class="text-center mt-4 hidden">Add some songs or upload a CSV to see your playlist here!</p>
+            <p id="noSongsMessage" class="no-songs-message">Add some songs or upload a CSV to see your playlist here!</p>
         </section>
 
-        <section class="data-section-wrapper mb-10">
-            <h2 class="text-2xl mb-6 text-center">Upload Your Playlist (CSV)</h2>
-            <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-4">
+        <section class="section data-section-wrapper">
+            <h2 class="section-title">Upload Your Playlist (CSV)</h2>
+            <div class="input-group">
                 <input type="file" id="csvFileInput" accept=".csv" class="input-field">
-                <button id="uploadCsvButton" class="btn-primary">Upload & Analyze CSV</button>
+                <button id="uploadCsvButton" class="btn btn-primary">Upload & Analyze CSV</button>
             </div>
-            <p id="uploadMessage" class="text-center mt-2"></p>
+            <p id="uploadMessage" class="upload-message"></p>
         </section>
 
-        <section class="data-section-wrapper mb-10">
-            <h2 class="text-2xl mb-6 text-center">Manually Add Songs</h2>
-            <div class="flex flex-wrap items-end gap-4 mb-4">
-                <input type="text" id="songInput" placeholder="Song Title" class="input-field flex-grow min-w-[150px]">
-                <input type="text" id="artistInput" placeholder="Artist Name" class="input-field flex-grow min-w-[150px]">
-                <input type="number" id="energyInput" placeholder="Energy (0.0 - 1.0)" step="0.1" min="0" max="1" class="input-field w-[120px]">
-                <select id="dayInput" class="input-field flex-grow min-w-[120px]">
+        <section class="section data-section-wrapper">
+            <h2 class="section-title">Manually Add Songs</h2>
+            <div class="input-group">
+                <input type="text" id="songInput" placeholder="Song Title" class="input-field">
+                <input type="text" id="artistInput" placeholder="Artist Name" class="input-field">
+                <input type="number" id="energyInput" placeholder="Energy (0.0 - 1.0)" step="0.1" min="0" max="1" class="input-field">
+                <select id="dayInput" class="input-field">
                     <option value="">Select Day Played</option>
                     <option value="Monday">Monday</option>
                     <option value="Tuesday">Tuesday</option>
@@ -109,18 +104,18 @@
                     <option value="Saturday">Saturday</option>
                     <option value="Sunday">Sunday</option>
                 </select>
-                <button id="addSongButton" class="btn-primary flex-shrink-0">Add Song</button>
+                <button id="addSongButton" class="btn btn-primary">Add Song</button>
             </div>
-            <p id="errorMessage" class="text-red-600 text-center mt-2 hidden"></p>
+            <p id="errorMessage" class="error-message"></p>
         </section>
 
     </div>
 
-    <button id="darkModeToggle">
-        <svg class="w-6 h-6 sun-icon" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <button id="darkModeToggle" class="dark-mode-toggle">
+        <svg class="sun-icon" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
     <path d="M12 4c-4.411 0-8 3.589-8 8s3.589 8 8 8 8-3.589 8-8-3.589-8-8-8zm0 14c-3.309 0-6-2.691-6-6s2.691-6 6-6 6 2.691 6 6-2.691 6-6 6zm-1-15v2h2V3h-2zm0 17v2h2v-2h-2zM3 11H1v2h2v-2zm20 0h-2v2h2v-2zM5.61 5.61l-1.41 1.41 1.41 1.41 1.41-1.41-1.41-1.41zm12.78 12.78l-1.41 1.41-1.41-1.41 1.41-1.41 1.41 1.41zM5.61 18.39l-1.41-1.41 1.41-1.41 1.41 1.41-1.41 1.41zm12.78-12.78l-1.41-1.41 1.41-1.41 1.41 1.41-1.41 1.41z"/>
         </svg>
-        <svg class="w-6 h-6 moon-icon hidden" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+        <svg class="moon-icon hidden" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
             <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
         </svg>
     </button>
